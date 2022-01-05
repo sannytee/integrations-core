@@ -50,6 +50,7 @@ CONNTRACK_STATS = {
     'system.net.conntrack.search_restart': (39936711, 36983181),
 }
 
+
 if PY3:
     ESCAPE_ENCODING = 'unicode-escape'
 
@@ -390,7 +391,8 @@ def send_ethtool_ioctl_mock(iface, sckt, data):
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_collect_ena(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    assert check._collect_ena('eth0') == {
+    stats_names, stats = check._fetch_ethtool_stats('eth0')
+    assert check._get_ena_metrics(stats_names, stats) == {
         'aws.ec2.bw_in_allowance_exceeded': 0,
         'aws.ec2.bw_out_allowance_exceeded': 0,
         'aws.ec2.conntrack_allowance_exceeded': 0,
@@ -401,9 +403,79 @@ def test_collect_ena(send_ethtool_ioctl, check):
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_collect_queue_metrics(send_ethtool_ioctl, check):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    stats_names, stats = check._fetch_ethtool_stats('eth0')
+    assert check._get_queue_metrics(stats_names, stats) == {
+        'queue_0': {
+            'queue.rx_bad_csum': 0,
+            'queue.rx_bad_desc_num': 0,
+            'queue.rx_bad_req_id': 0,
+            'queue.rx_bytes': 24423973,
+            'queue.rx_cnt': 18967,
+            'queue.rx_csum_good': 0,
+            'queue.rx_csum_unchecked': 0,
+            'queue.rx_dma_mapping_err': 0,
+            'queue.rx_empty_rx_ring': 0,
+            'queue.rx_page_alloc_fail': 0,
+            'queue.rx_refil_partial': 0,
+            'queue.rx_rx_copybreak_pkt': 2394,
+            'queue.rx_skb_alloc_fail': 0,
+            'queue.tx_bad_req_id': 0,
+            'queue.tx_bytes': 1566697,
+            'queue.tx_cnt': 17841,
+            'queue.tx_dma_mapping_err': 0,
+            'queue.tx_doorbells': 17766,
+            'queue.tx_linearize': 0,
+            'queue.tx_linearize_failed': 0,
+            'queue.tx_llq_buffer_copy': 0,
+            'queue.tx_missed_tx': 0,
+            'queue.tx_napi_comp': 21232,
+            'queue.tx_prepare_ctx_err': 0,
+            'queue.tx_queue_stop': 0,
+            'queue.tx_queue_wakeup': 0,
+            'queue.tx_tx_poll': 21232,
+            'queue.tx_unmask_interrupt': 21232,
+        },
+        'queue_1': {
+            'queue.rx_bad_csum': 0,
+            'queue.rx_bad_desc_num': 0,
+            'queue.rx_bad_req_id': 0,
+            'queue.rx_bytes': 429894172,
+            'queue.rx_cnt': 300129,
+            'queue.rx_csum_good': 0,
+            'queue.rx_csum_unchecked': 0,
+            'queue.rx_dma_mapping_err': 0,
+            'queue.rx_empty_rx_ring': 0,
+            'queue.rx_page_alloc_fail': 0,
+            'queue.rx_refil_partial': 0,
+            'queue.rx_rx_copybreak_pkt': 7146,
+            'queue.rx_skb_alloc_fail': 0,
+            'queue.tx_bad_req_id': 0,
+            'queue.tx_bytes': 1618542,
+            'queue.tx_cnt': 26865,
+            'queue.tx_dma_mapping_err': 0,
+            'queue.tx_doorbells': 26863,
+            'queue.tx_linearize': 0,
+            'queue.tx_linearize_failed': 0,
+            'queue.tx_llq_buffer_copy': 0,
+            'queue.tx_missed_tx': 0,
+            'queue.tx_napi_comp': 87481,
+            'queue.tx_prepare_ctx_err': 0,
+            'queue.tx_queue_stop': 0,
+            'queue.tx_queue_wakeup': 0,
+            'queue.tx_tx_poll': 87509,
+            'queue.tx_unmask_interrupt': 87481,
+        },
+    }
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    metrics = check._collect_ena('eth0')
+    stats_names, stats = check._fetch_ethtool_stats('eth0')
+    metrics = check._get_ena_metrics(stats_names, stats)
     check._excluded_ifaces = []
     check._exclude_iface_re = ''
     check._submit_ena_metrics('eth0', metrics, [])
@@ -424,7 +496,8 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_collect_ena_values_not_present(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    assert check._collect_ena('enp0s3') == {}
+    stats_names, stats = check._fetch_ethtool_stats('enp0s3')
+    assert check._get_ena_metrics(stats_names, stats) == {}
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
@@ -432,5 +505,24 @@ def test_collect_ena_values_not_present(send_ethtool_ioctl, check):
 def test_collect_ena_unsupported_on_iface(ioctl_mock, check, caplog):
     caplog.set_level(logging.DEBUG)
     ioctl_mock.side_effect = OSError('mock error')
-    check._collect_ena('eth0')
-    assert 'OSError while trying to collect ENA metrics for interface eth0: mock error' in caplog.text
+    _, _ = check._fetch_ethtool_stats('eth0')
+    assert 'OSError while trying to collect ethtool metrics for interface eth0: mock error' in caplog.text
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+def test_get_metric_queue_name(check):
+    queue_name, metric_name = check._get_metric_queue_name('queue_0_tx_cnt')
+    assert queue_name == 'queue_0'
+    assert metric_name == 'tx_cnt'
+
+    queue_name, metric_name = check._get_metric_queue_name('queue_10_tx_doorbells')
+    assert queue_name == 'queue_10'
+    assert metric_name == 'tx_doorbells'
+
+    queue_name, metric_name = check._get_metric_queue_name('tx_doorbells_queue_')
+    assert queue_name is None
+    assert metric_name is None
+
+    queue_name, metric_name = check._get_metric_queue_name('rx_queue_0_packets')
+    assert queue_name == 'queue_0'
+    assert metric_name == 'rx_packets'
