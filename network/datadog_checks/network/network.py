@@ -471,7 +471,7 @@ class Network(AgentCheck):
         for queue_name, metric_map in iteritems(queue_metrics):
             tags = metric_tags + [queue_name]
             for metric, val in iteritems(metric_map):
-                self.gauge('system.net.%s' % metric, val, tags=tags)
+                self.count('system.net.%s' % metric, val, tags=tags)
                 count += 1
         self.log.debug("tracked %s network queue metrics for interface %s", count, iface)
 
@@ -1254,7 +1254,7 @@ class Network(AgentCheck):
             return None, None
         parts.pop(queue_index)
         parts.pop(queue_index)
-        return 'queue_{}'.format(queue_num), '_'.join(parts)
+        return 'queue:{}'.format(queue_num), '_'.join(parts)
 
     def _get_queue_metrics(self, driver_name, stats_names, stats):
         """
