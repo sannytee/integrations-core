@@ -68,8 +68,7 @@ ENA_METRIC_NAMES = [
     "pps_allowance_exceeded",
 ]
 
-QUEUE_METRIC_PREFIX = "queue."
-QUEUE_METRICS_NAMES = {
+ETHTOOL_METRIC_NAMES = {
     # Example ethtool -S iface with ena driver:
     # queue_0_tx_cnt: 123665045
     # queue_0_tx_bytes: 34567996008
@@ -234,12 +233,12 @@ class Network(AgentCheck):
         self._collect_rate_metrics = instance.get('collect_rate_metrics', True)
         self._collect_count_metrics = instance.get('collect_count_metrics', False)
         self._collect_ena_metrics = instance.get('collect_aws_ena_metrics', False)
-        self._collect_queue_metrics = instance.get('collect_queue_metrics', False)
+        self._collect_ethtool_metrics = instance.get('collect_ethtool_metrics', False)
 
-        self._collect_ethtool_stats = self._collect_ena_metrics or self._collect_queue_metrics
+        self._collect_ethtool_stats = self._collect_ena_metrics or self._collect_ethtool_metrics
         if fcntl is None and self._collect_ethtool_stats:
             raise ConfigurationError(
-                "fcntl not importable, collect_aws_ena_metrics and collect_queue_metrics should be disabled"
+                "fcntl not importable, collect_aws_ena_metrics and collect_ethtool_metrics should be disabled"
             )
 
         # This decides whether we should split or combine connection states,
@@ -459,8 +458,8 @@ class Network(AgentCheck):
             count += 1
         self.log.debug("tracked %s network ena metrics for interface %s", count, iface)
 
-    def _submit_queue_metrics(self, iface, queue_metrics, tags):
-        if not queue_metrics:
+    def _submit_ethtool_metrics(self, iface, ethtool_metrics, tags):
+        if not ethtool_metrics:
             return
         if iface in self._excluded_ifaces or (self._exclude_iface_re and self._exclude_iface_re.match(iface)):
             # Skip this network interface.
@@ -470,12 +469,12 @@ class Network(AgentCheck):
         metric_tags.append('device:{}'.format(iface))
 
         count = 0
-        for queue_name, metric_map in iteritems(queue_metrics):
-            tags = metric_tags + [queue_name]
+        for ethtool_name, metric_map in iteritems(ethtool_metrics):
+            tags = metric_tags + [ethtool_name]
             for metric, val in iteritems(metric_map):
                 self.count('system.net.%s' % metric, val, tags=tags)
                 count += 1
-        self.log.debug("tracked %s network queue metrics for interface %s", count, iface)
+        self.log.debug("tracked %s network ethtool metrics for interface %s", count, iface)
 
     def _parse_value(self, v):
         try:
@@ -1156,9 +1155,9 @@ class Network(AgentCheck):
         if self._collect_ena_metrics:
             ena_metrics = self._get_ena_metrics(ethtool_stats_names, ethtool_stats)
             self._submit_ena_metrics(iface, ena_metrics, tags)
-        if self._collect_queue_metrics:
-            queue_metrics = self._get_queue_metrics(driver_name, ethtool_stats_names, ethtool_stats)
-            self._submit_queue_metrics(iface, queue_metrics, tags)
+        if self._collect_ethtool_metrics:
+            ethtool_metrics = self._get_ethtool_metrics(driver_name, ethtool_stats_names, ethtool_stats)
+            self._submit_ethtool_metrics(iface, ethtool_metrics, tags)
 
     def _fetch_ethtool_stats(self, iface):
         """
@@ -1244,6 +1243,11 @@ class Network(AgentCheck):
         return stats_names, stats
 
     def _get_metric_queue_name(self, stat_name):
+        """
+        Extract the queue and the metric name from ethtool stat name:
+        queue_0_tx_cnt -> (queue:0, tx_cnt)
+        tx_queue_0_bytes -> (queue:0, tx_bytes)
+        """
         if 'queue_' not in stat_name:
             return None, None
         parts = stat_name.split('_')
@@ -1257,26 +1261,44 @@ class Network(AgentCheck):
         parts.pop(queue_index)
         return 'queue:{}'.format(queue_num), '_'.join(parts)
 
-    def _get_queue_metrics(self, driver_name, stats_names, stats):
+    def _get_metric_cpu_name(self, stat_name):
         """
-        Get all queue metrics specified in QUEUE_METRICS_NAMES list and their values from ethtoolself.
-        We convert the queue number to a tag: queue_0_tx_cnt will be submitted as tx_cnt with the tag queue_0
+        Extract the cpu and the metric name from ethtool stat name:
+        cpu0_rx_bytes -> (cpu:0, rx_bytes)
+        """
+        if not stat_name.startswith('cpu'):
+            return None, None
+        parts = stat_name.split('_')
+        cpu_num = parts[0][3:]
+        if not cpu_num.isdigit():
+            return None, None
+        parts.pop(0)
+        return 'cpu:{}'.format(cpu_num), '_'.join(parts)
 
-        Return [queue][metric] -> value
+    def _get_ethtool_metrics(self, driver_name, stats_names, stats):
         """
-        queue_metrics = defaultdict(dict)
-        if driver_name not in QUEUE_METRICS_NAMES:
-            return queue_metrics
+        Get all ethtool metrics specified in QUEUE_METRICS_NAMES list and their values from ethtool.
+        We convert the queue and cpu number to a tag: queue_0_tx_cnt will be submitted as tx_cnt with the tag queue:0
+
+        Return [tag][metric] -> value
+        """
+        ethtool_metrics = defaultdict(dict)
+        if driver_name not in ETHTOOL_METRIC_NAMES:
+            return ethtool_metrics
         for i, stat_name in enumerate(stats_names):
-            queue_name, metric_name = self._get_metric_queue_name(stat_name)
-            if not queue_name:
-                continue
-            if metric_name in QUEUE_METRICS_NAMES[driver_name]:
+            tag, metric_name = self._get_metric_queue_name(stat_name)
+            metric_prefix = '.queue.'
+            if not tag:
+                tag, metric_name = self._get_metric_cpu_name(stat_name)
+                metric_prefix = '.cpu.'
+                if not tag:
+                    continue
+            if metric_name in ETHTOOL_METRIC_NAMES[driver_name]:
                 offset = 8 + 8 * i
                 value = struct.unpack('Q', stats[offset : offset + 8])[0]
-                queue_metrics[queue_name][driver_name + '.' + QUEUE_METRIC_PREFIX + metric_name] = value
+                ethtool_metrics[tag][driver_name + metric_prefix + metric_name] = value
 
-        return queue_metrics
+        return ethtool_metrics
 
     def _get_ena_metrics(self, stats_names, stats):
         """
