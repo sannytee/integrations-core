@@ -159,12 +159,14 @@ QUEUE_METRICS_NAMES = {
         "rx_drops",
         "rx_kicks",
         "rx_packets",
+        "rx_bytes",
         "rx_xdp_drops",
         "rx_xdp_packets",
         "rx_xdp_redirects",
         "rx_xdp_tx",
         "tx_kicks",
         "tx_packets",
+        "tx_bytes",
         "tx_xdp_tx",
         "tx_xdp_tx_drops",
     ],
@@ -635,7 +637,6 @@ class Network(AgentCheck):
                 }
                 self._submit_devicemetrics(iface, metrics, custom_tags)
                 self._handle_ethtool_stats(iface, custom_tags)
-
 
         netstat_data = {}
         for f in ['netstat', 'snmp']:
