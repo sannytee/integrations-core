@@ -472,7 +472,7 @@ class Network(AgentCheck):
         for ethtool_name, metric_map in iteritems(ethtool_metrics):
             tags = metric_tags + [ethtool_name]
             for metric, val in iteritems(metric_map):
-                self.count('system.net.%s' % metric, val, tags=tags)
+                self.monotonic_count('system.net.%s' % metric, val, tags=tags)
                 count += 1
         self.log.debug("tracked %s network ethtool metrics for interface %s", count, iface)
 
