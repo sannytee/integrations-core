@@ -50,6 +50,7 @@ SOLARIS_TCP_METRICS = [
 
 # constants for extracting ethtool data via ioctl
 SIOCETHTOOL = 0x8946
+ETHTOOL_GDRVINFO = 0x00000003
 ETHTOOL_GSTRINGS = 0x0000001B
 ETHTOOL_GSSET_INFO = 0x00000037
 ETHTOOL_GSTATS = 0x0000001D
@@ -68,66 +69,78 @@ ENA_METRIC_NAMES = [
 ]
 
 QUEUE_METRIC_PREFIX = "queue."
-QUEUE_METRICS_NAMES = [
+QUEUE_METRICS_NAMES = {
     # Example ethtool -S iface with ena driver:
-    # queue_0_tx_cnt: 529579747
-    # queue_0_tx_bytes: 223164192951
+    # queue_0_tx_cnt: 123665045
+    # queue_0_tx_bytes: 34567996008
     # queue_0_tx_queue_stop: 0
     # queue_0_tx_queue_wakeup: 0
     # queue_0_tx_dma_mapping_err: 0
-    # queue_0_tx_linearize: 220
+    # queue_0_tx_linearize: 0
     # queue_0_tx_linearize_failed: 0
-    # queue_0_tx_napi_comp: 1198310071
-    # queue_0_tx_tx_poll: 1198974596
-    # queue_0_tx_doorbells: 501131868
+    # queue_0_tx_napi_comp: 131999879
+    # queue_0_tx_tx_poll: 131999896
+    # queue_0_tx_doorbells: 117093522
     # queue_0_tx_prepare_ctx_err: 0
     # queue_0_tx_bad_req_id: 0
+    # queue_0_tx_llq_buffer_copy: 87883427
     # queue_0_tx_missed_tx: 0
-    # queue_0_rx_cnt: 1396375758
-    # queue_0_rx_bytes: 1826714259701
+    # queue_0_tx_unmask_interrupt: 131999879
+    # queue_0_rx_cnt: 15934470
+    # queue_0_rx_bytes: 27955854239
+    # queue_0_rx_rx_copybreak_pkt: 8504787
+    # queue_0_rx_csum_good: 15923815
     # queue_0_rx_refil_partial: 0
     # queue_0_rx_bad_csum: 0
     # queue_0_rx_page_alloc_fail: 0
     # queue_0_rx_skb_alloc_fail: 0
     # queue_0_rx_dma_mapping_err: 0
     # queue_0_rx_bad_desc_num: 0
-    # queue_0_rx_rx_copybreak_pkt: 265950619
     # queue_0_rx_bad_req_id: 0
     # queue_0_rx_empty_rx_ring: 0
-    "rx_bad_csum",
-    "rx_bad_desc_num",
-    "rx_bad_req_id",
-    "rx_bytes",
-    "rx_cnt",
-    "rx_csum_good",
-    "rx_csum_unchecked",
-    "rx_dma_mapping_err",
-    "rx_empty_rx_ring",
-    "rx_page_alloc_fail",
-    "rx_refil_partial",
-    "rx_rx_copybreak_pkt",
-    "rx_skb_alloc_fail",
-    "rx_xdp_aborted",
-    "rx_xdp_drop",
-    "rx_xdp_invalid",
-    "rx_xdp_pass",
-    "rx_xdp_redirect",
-    "rx_xdp_tx",
-    "tx_bad_req_id",
-    "tx_bytes",
-    "tx_cnt",
-    "tx_dma_mapping_err",
-    "tx_doorbells",
-    "tx_linearize",
-    "tx_linearize_failed",
-    "tx_llq_buffer_copy",
-    "tx_missed_tx",
-    "tx_napi_comp",
-    "tx_prepare_ctx_err",
-    "tx_queue_stop",
-    "tx_queue_wakeup",
-    "tx_tx_poll",
-    "tx_unmask_interrupt",
+    # queue_0_rx_csum_unchecked: 0
+    # queue_0_rx_xdp_aborted: 0
+    # queue_0_rx_xdp_drop: 0
+    # queue_0_rx_xdp_pass: 0
+    # queue_0_rx_xdp_tx: 0
+    # queue_0_rx_xdp_invalid: 0
+    # queue_0_rx_xdp_redirect: 0
+    'ena': [
+        "rx_bad_csum",
+        "rx_bad_desc_num",
+        "rx_bad_req_id",
+        "rx_bytes",
+        "rx_cnt",
+        "rx_csum_good",
+        "rx_csum_unchecked",
+        "rx_dma_mapping_err",
+        "rx_empty_rx_ring",
+        "rx_page_alloc_fail",
+        "rx_refil_partial",
+        "rx_rx_copybreak_pkt",
+        "rx_skb_alloc_fail",
+        "rx_xdp_aborted",
+        "rx_xdp_drop",
+        "rx_xdp_invalid",
+        "rx_xdp_pass",
+        "rx_xdp_redirect",
+        "rx_xdp_tx",
+        "tx_bad_req_id",
+        "tx_bytes",
+        "tx_cnt",
+        "tx_dma_mapping_err",
+        "tx_doorbells",
+        "tx_linearize",
+        "tx_linearize_failed",
+        "tx_llq_buffer_copy",
+        "tx_missed_tx",
+        "tx_napi_comp",
+        "tx_prepare_ctx_err",
+        "tx_queue_stop",
+        "tx_queue_wakeup",
+        "tx_tx_poll",
+        "tx_unmask_interrupt",
+    ],
     # Example of output of ethtool -S iface with virtio driver:
     # rx_queue_0_packets: 16591239
     # rx_queue_0_bytes: 51217084980
@@ -142,18 +155,20 @@ QUEUE_METRICS_NAMES = [
     # tx_queue_0_xdp_tx: 0
     # tx_queue_0_xdp_tx_drops: 0
     # tx_queue_0_kicks: 81
-    "rx_drops",
-    "rx_kicks",
-    "rx_packets",
-    "rx_xdp_drops",
-    "rx_xdp_packets",
-    "rx_xdp_redirects",
-    "rx_xdp_tx",
-    "tx_kicks",
-    "tx_packets",
-    "tx_xdp_tx",
-    "tx_xdp_tx_drops",
-]
+    'virtio_net': [
+        "rx_drops",
+        "rx_kicks",
+        "rx_packets",
+        "rx_xdp_drops",
+        "rx_xdp_packets",
+        "rx_xdp_redirects",
+        "rx_xdp_tx",
+        "tx_kicks",
+        "tx_packets",
+        "tx_xdp_tx",
+        "tx_xdp_tx_drops",
+    ],
+}
 
 
 class Network(AgentCheck):
@@ -588,7 +603,7 @@ class Network(AgentCheck):
 
                 # read Ethtool metrics, if configured and available
                 if self._collect_ethtool_stats:
-                    ethtool_stats_names, ethtool_stats = self._fetch_ethtool_stats(iface)
+                    driver_name, driver_version, ethtool_stats_names, ethtool_stats = self._fetch_ethtool_stats(iface)
                     if self._collect_ena_metrics:
                         ena_metrics = self._get_ena_metrics(ethtool_stats_names, ethtool_stats)
                         self._submit_ena_metrics(iface, ena_metrics, custom_tags)
@@ -1117,8 +1132,9 @@ class Network(AgentCheck):
         ethtool_socket = None
         try:
             ethtool_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+            driver_name, driver_version = self._get_ethtool_drvinfo(iface, ethtool_socket)
             stats_names, stats = self._get_ethtool_stats(iface, ethtool_socket)
-            return stats_names, stats
+            return driver_name, driver_version, stats_names, stats
         except OSError as e:
             # this will happen for interfaces that don't support SIOCETHTOOL - e.g. loopback or docker
             self.log.debug('OSError while trying to collect ethtool metrics for interface %s: %s', iface, str(e))
@@ -1127,7 +1143,7 @@ class Network(AgentCheck):
         finally:
             if ethtool_socket is not None:
                 ethtool_socket.close()
-        return ([], [])
+        return (None, None, [], [])
 
     def _send_ethtool_ioctl(self, iface, sckt, data):
         """
@@ -1135,6 +1151,15 @@ class Network(AgentCheck):
         """
         ifr = struct.pack('16sP', iface.encode('utf-8'), data.buffer_info()[0])
         fcntl.ioctl(sckt.fileno(), SIOCETHTOOL, ifr)
+
+    def _byte_array_to_string(self, s):
+        """
+        Convert a byte array to string
+        b'hv_netvsc\x00\x00\x00\x00' -> 'hv_netvsc'
+        """
+        s = s.tobytes() if PY3 else s.tostring()
+        s = s.partition(b'\x00')[0].decode('utf-8')
+        return s
 
     def _get_ethtool_gstringset(self, iface, sckt):
         """
@@ -1153,11 +1178,18 @@ class Network(AgentCheck):
         all_names = []
         for i in range(sset_len):
             offset = 12 + ETH_GSTRING_LEN * i
-            s = strings[offset : offset + ETH_GSTRING_LEN]
-            s = s.tobytes() if PY3 else s.tostring()
-            s = s.partition(b'\x00')[0].decode('utf-8')
+            s = self._byte_array_to_string(strings[offset : offset + ETH_GSTRING_LEN])
             all_names.append(s)
         return all_names
+
+    def _get_ethtool_drvinfo(self, iface, sckt):
+        drvinfo = array.array('B', struct.pack('I', ETHTOOL_GDRVINFO))
+        # Struct https://github.com/torvalds/linux/blob/master/include/uapi/linux/ethtool.h#L187-L200
+        drvinfo.extend([0] * (1 + 32 + 32 + 32 + 32 + 32 + 12 + 5))
+        self._send_ethtool_ioctl(iface, sckt, drvinfo)
+        driver_name = self._byte_array_to_string(drvinfo[4 : 4 + 32])
+        driver_version = self._byte_array_to_string(drvinfo[4 + 32 : 32 + 32])
+        return driver_name, driver_version
 
     def _get_ethtool_stats(self, iface, sckt):
         stats_names = list(self._get_ethtool_gstringset(iface, sckt))
@@ -1183,7 +1215,7 @@ class Network(AgentCheck):
         parts.pop(queue_index)
         return 'queue_{}'.format(queue_num), '_'.join(parts)
 
-    def _get_queue_metrics(self, stats_names, stats):
+    def _get_queue_metrics(self, driver_name, stats_names, stats):
         """
         Get all queue metrics specified in QUEUE_METRICS_NAMES list and their values from ethtoolself.
         We convert the queue number to a tag: queue_0_tx_cnt will be submitted as tx_cnt with the tag queue_0
@@ -1191,14 +1223,16 @@ class Network(AgentCheck):
         Return [queue][metric] -> value
         """
         queue_metrics = defaultdict(dict)
+        if driver_name not in QUEUE_METRICS_NAMES:
+            return queue_metrics
         for i, stat_name in enumerate(stats_names):
             queue_name, metric_name = self._get_metric_queue_name(stat_name)
             if not queue_name:
                 continue
-            if metric_name in QUEUE_METRICS_NAMES:
+            if metric_name in QUEUE_METRICS_NAMES[driver_name]:
                 offset = 8 + 8 * i
                 value = struct.unpack('Q', stats[offset : offset + 8])[0]
-                queue_metrics[queue_name][QUEUE_METRIC_PREFIX + metric_name] = value
+                queue_metrics[queue_name][QUEUE_METRIC_PREFIX + driver_name + '.' + metric_name] = value
 
         return queue_metrics
 
