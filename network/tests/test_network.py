@@ -656,11 +656,12 @@ def test_collect_queue_metrics_hv_netvsc(send_ethtool_ioctl, check):
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
-    metrics = check._get_ena_metrics(stats_names, stats)
+    check._collect_ethtool_stats = True
+    check._collect_ena_metrics = True
+    check._collect_queue_metrics = False
     check._excluded_ifaces = []
     check._exclude_iface_re = ''
-    check._submit_ena_metrics('eth0', metrics, [])
+    check._handle_ethtool_stats('eth0', [])
 
     expected_metrics = [
         'system.net.aws.ec2.bw_in_allowance_exceeded',
@@ -671,7 +672,7 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     ]
 
     for m in expected_metrics:
-        aggregator.assert_metric(m, count=1, value=0, tags=['device:eth0'])
+        aggregator.assert_metric(m, count=1, value=0, tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws'])
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")

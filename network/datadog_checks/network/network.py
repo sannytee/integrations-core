@@ -467,10 +467,6 @@ class Network(AgentCheck):
         metric_tags = [] if tags is None else tags[:]
         metric_tags.append('device:{}'.format(iface))
 
-        # allowed = [QUEUE_METRIC_PREFIX + m for m in QUEUE_METRICS_NAMES]
-        # for m in queue_metrics:
-        # assert m in allowed
-
         count = 0
         for queue_name, metric_map in iteritems(queue_metrics):
             tags = metric_tags + [queue_name]
@@ -638,16 +634,8 @@ class Network(AgentCheck):
                     'packets_out.error': self._parse_value(x[10]) + self._parse_value(x[11]),
                 }
                 self._submit_devicemetrics(iface, metrics, custom_tags)
+                self._handle_ethtool_stats(iface, custom_tags)
 
-                # read Ethtool metrics, if configured and available
-                if self._collect_ethtool_stats:
-                    driver_name, driver_version, ethtool_stats_names, ethtool_stats = self._fetch_ethtool_stats(iface)
-                    if self._collect_ena_metrics:
-                        ena_metrics = self._get_ena_metrics(ethtool_stats_names, ethtool_stats)
-                        self._submit_ena_metrics(iface, ena_metrics, custom_tags)
-                    if self._collect_queue_metrics:
-                        queue_metrics = self._get_queue_metrics(ethtool_stats_names, ethtool_stats)
-                        self._submit_queue_metrics(iface, queue_metrics, custom_tags)
 
         netstat_data = {}
         for f in ['netstat', 'snmp']:
@@ -1155,6 +1143,21 @@ class Network(AgentCheck):
                 continue
 
             yield (state, fields[1], fields[2])
+
+    def _handle_ethtool_stats(self, iface, custom_tags):
+        # read Ethtool metrics, if configured and available
+        if not self._collect_ethtool_stats:
+            return
+        driver_name, driver_version, ethtool_stats_names, ethtool_stats = self._fetch_ethtool_stats(iface)
+        tags = [] if custom_tags is None else custom_tags[:]
+        tags.append('driver_name:{}'.format(driver_name))
+        tags.append('driver_version:{}'.format(driver_version))
+        if self._collect_ena_metrics:
+            ena_metrics = self._get_ena_metrics(ethtool_stats_names, ethtool_stats)
+            self._submit_ena_metrics(iface, ena_metrics, tags)
+        if self._collect_queue_metrics:
+            queue_metrics = self._get_queue_metrics(driver_name, ethtool_stats_names, ethtool_stats)
+            self._submit_queue_metrics(iface, queue_metrics, tags)
 
     def _fetch_ethtool_stats(self, iface):
         """
