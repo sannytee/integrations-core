@@ -50,7 +50,7 @@ CONNTRACK_STATS = {
     'system.net.conntrack.search_restart': (39936711, 36983181),
 }
 
-ENA_QUEUE_VALUES = {
+ENA_ETHTOOL_VALUES = {
     'queue:0': {
         'ena.queue.rx_bad_csum': 0,
         'ena.queue.rx_bad_desc_num': 0,
@@ -110,6 +110,268 @@ ENA_QUEUE_VALUES = {
         'ena.queue.tx_queue_wakeup': 0,
         'ena.queue.tx_tx_poll': 87509,
         'ena.queue.tx_unmask_interrupt': 87481,
+    },
+}
+
+VIRTIO_ETHTOOL_VALUES = {
+    'queue:0': {
+        'virtio_net.queue.rx_bytes': 3330581189214,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 49443,
+        'virtio_net.queue.rx_packets': 3240253467,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 729525539711,
+        'virtio_net.queue.tx_kicks': 17882,
+        'virtio_net.queue.tx_packets': 1171912402,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:1': {
+        'virtio_net.queue.rx_bytes': 2943312275097,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 44975,
+        'virtio_net.queue.rx_packets': 2947437406,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 711942138149,
+        'virtio_net.queue.tx_kicks': 17055,
+        'virtio_net.queue.tx_packets': 1117705342,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:2': {
+        'virtio_net.queue.rx_bytes': 3114136399578,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 46080,
+        'virtio_net.queue.rx_packets': 3019742569,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 715095442379,
+        'virtio_net.queue.tx_kicks': 17149,
+        'virtio_net.queue.tx_packets': 1123816782,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:3': {
+        'virtio_net.queue.rx_bytes': 3017036703051,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 46688,
+        'virtio_net.queue.rx_packets': 3059719508,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 714098071307,
+        'virtio_net.queue.tx_kicks': 16939,
+        'virtio_net.queue.tx_packets': 1110067614,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:4': {
+        'virtio_net.queue.rx_bytes': 3859364388980,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 55049,
+        'virtio_net.queue.rx_packets': 3607658361,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 723288378426,
+        'virtio_net.queue.tx_kicks': 17745,
+        'virtio_net.queue.tx_packets': 1162873931,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:5': {
+        'virtio_net.queue.rx_bytes': 3638485117143,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 52996,
+        'virtio_net.queue.rx_packets': 3473131946,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 717434286730,
+        'virtio_net.queue.tx_kicks': 17543,
+        'virtio_net.queue.tx_packets': 1149663211,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:6': {
+        'virtio_net.queue.rx_bytes': 3344829702018,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 49510,
+        'virtio_net.queue.rx_packets': 3244657039,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 712950253668,
+        'virtio_net.queue.tx_kicks': 17528,
+        'virtio_net.queue.tx_packets': 1148696179,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+    'queue:7': {
+        'virtio_net.queue.rx_bytes': 3528035076384,
+        'virtio_net.queue.rx_drops': 0,
+        'virtio_net.queue.rx_kicks': 52167,
+        'virtio_net.queue.rx_packets': 3418771828,
+        'virtio_net.queue.rx_xdp_drops': 0,
+        'virtio_net.queue.rx_xdp_packets': 0,
+        'virtio_net.queue.rx_xdp_redirects': 0,
+        'virtio_net.queue.rx_xdp_tx': 0,
+        'virtio_net.queue.tx_bytes': 712418609150,
+        'virtio_net.queue.tx_kicks': 17508,
+        'virtio_net.queue.tx_packets': 1147383428,
+        'virtio_net.queue.tx_xdp_tx': 0,
+        'virtio_net.queue.tx_xdp_tx_drops': 0,
+    },
+}
+
+HV_NETVSC_ETHTOOL_VALUES = {
+    'queue:0': {
+        'hv_netvsc.queue.rx_bytes': 69753132,
+        'hv_netvsc.queue.rx_packets': 174128,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 673523,
+        'hv_netvsc.queue.tx_packets': 367,
+    },
+    'queue:1': {
+        'hv_netvsc.queue.rx_bytes': 80536029,
+        'hv_netvsc.queue.rx_packets': 186321,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 20418,
+        'hv_netvsc.queue.tx_packets': 40,
+    },
+    'queue:2': {
+        'hv_netvsc.queue.rx_bytes': 97417257,
+        'hv_netvsc.queue.rx_packets': 190115,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 194574,
+        'hv_netvsc.queue.tx_packets': 96,
+    },
+    'queue:3': {
+        'hv_netvsc.queue.rx_bytes': 57902633,
+        'hv_netvsc.queue.rx_packets': 161989,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 43830,
+        'hv_netvsc.queue.tx_packets': 36,
+    },
+    'queue:4': {
+        'hv_netvsc.queue.rx_bytes': 57235863,
+        'hv_netvsc.queue.rx_packets': 161812,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 9700,
+        'hv_netvsc.queue.tx_packets': 17,
+    },
+    'queue:5': {
+        'hv_netvsc.queue.rx_bytes': 57347838,
+        'hv_netvsc.queue.rx_packets': 167028,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 47915,
+        'hv_netvsc.queue.tx_packets': 52,
+    },
+    'queue:6': {
+        'hv_netvsc.queue.rx_bytes': 56878203,
+        'hv_netvsc.queue.rx_packets': 166400,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 16863,
+        'hv_netvsc.queue.tx_packets': 13,
+    },
+    'queue:7': {
+        'hv_netvsc.queue.rx_bytes': 59770311,
+        'hv_netvsc.queue.rx_packets': 163608,
+        'hv_netvsc.queue.rx_xdp_drop': 0,
+        'hv_netvsc.queue.tx_bytes': 27259,
+        'hv_netvsc.queue.tx_packets': 57,
+    },
+    'cpu:0': {
+        'hv_netvsc.cpu.rx_bytes': 192205947,
+        'hv_netvsc.cpu.rx_packets': 265690,
+        'hv_netvsc.cpu.tx_bytes': 2332595871,
+        'hv_netvsc.cpu.tx_packets': 2162169,
+        'hv_netvsc.cpu.vf_rx_bytes': 111669918,
+        'hv_netvsc.cpu.vf_rx_packets': 79369,
+        'hv_netvsc.cpu.vf_tx_bytes': 2332575453,
+        'hv_netvsc.cpu.vf_tx_packets': 2162129,
+    },
+    'cpu:1': {
+        'hv_netvsc.cpu.rx_bytes': 1237224500,
+        'hv_netvsc.cpu.rx_packets': 2561669,
+        'hv_netvsc.cpu.tx_bytes': 2548076602,
+        'hv_netvsc.cpu.tx_packets': 2077301,
+        'hv_netvsc.cpu.vf_rx_bytes': 1139807243,
+        'hv_netvsc.cpu.vf_rx_packets': 2371554,
+        'hv_netvsc.cpu.vf_tx_bytes': 2547882028,
+        'hv_netvsc.cpu.vf_tx_packets': 2077205,
+    },
+    'cpu:2': {
+        'hv_netvsc.cpu.rx_bytes': 854059182,
+        'hv_netvsc.cpu.rx_packets': 2373664,
+        'hv_netvsc.cpu.tx_bytes': 4226031193,
+        'hv_netvsc.cpu.tx_packets': 3312434,
+        'hv_netvsc.cpu.vf_rx_bytes': 726403417,
+        'hv_netvsc.cpu.vf_rx_packets': 2037547,
+        'hv_netvsc.cpu.vf_tx_bytes': 4225313840,
+        'hv_netvsc.cpu.vf_tx_packets': 3312031,
+    },
+    'cpu:3': {
+        'hv_netvsc.cpu.rx_bytes': 958939049,
+        'hv_netvsc.cpu.rx_packets': 2520782,
+        'hv_netvsc.cpu.tx_bytes': 4672129227,
+        'hv_netvsc.cpu.tx_packets': 3349434,
+        'hv_netvsc.cpu.vf_rx_bytes': 901703186,
+        'hv_netvsc.cpu.vf_rx_packets': 2358970,
+        'hv_netvsc.cpu.vf_tx_bytes': 4672119527,
+        'hv_netvsc.cpu.vf_tx_packets': 3349417,
+    },
+    'cpu:4': {
+        'hv_netvsc.cpu.rx_bytes': 3687149916,
+        'hv_netvsc.cpu.rx_packets': 4446524,
+        'hv_netvsc.cpu.tx_bytes': 7290434777,
+        'hv_netvsc.cpu.tx_packets': 5329581,
+        'hv_netvsc.cpu.vf_rx_bytes': 3629802078,
+        'hv_netvsc.cpu.vf_rx_packets': 4279496,
+        'hv_netvsc.cpu.vf_tx_bytes': 7290386862,
+        'hv_netvsc.cpu.vf_tx_packets': 5329529,
+    },
+    'cpu:5': {
+        'hv_netvsc.cpu.rx_bytes': 2252499618,
+        'hv_netvsc.cpu.rx_packets': 3448975,
+        'hv_netvsc.cpu.tx_bytes': 5652959262,
+        'hv_netvsc.cpu.tx_packets': 4020678,
+        'hv_netvsc.cpu.vf_rx_bytes': 2195621415,
+        'hv_netvsc.cpu.vf_rx_packets': 3282575,
+        'hv_netvsc.cpu.vf_tx_bytes': 5652942399,
+        'hv_netvsc.cpu.vf_tx_packets': 4020665,
+    },
+    'cpu:6': {
+        'hv_netvsc.cpu.rx_bytes': 2648234282,
+        'hv_netvsc.cpu.rx_packets': 4579181,
+        'hv_netvsc.cpu.tx_bytes': 7967277235,
+        'hv_netvsc.cpu.tx_packets': 5643851,
+        'hv_netvsc.cpu.vf_rx_bytes': 2588463971,
+        'hv_netvsc.cpu.vf_rx_packets': 4415573,
+        'hv_netvsc.cpu.vf_tx_bytes': 7967249976,
+        'hv_netvsc.cpu.vf_tx_packets': 5643794,
+    },
+    'cpu:7': {
+        'hv_netvsc.cpu.rx_bytes': 1050540361,
+        'hv_netvsc.cpu.rx_packets': 3362379,
+        'hv_netvsc.cpu.tx_bytes': 6038160981,
+        'hv_netvsc.cpu.tx_packets': 4145533,
+        'hv_netvsc.cpu.vf_rx_bytes': 1050540361,
+        'hv_netvsc.cpu.vf_rx_packets': 3362379,
+        'hv_netvsc.cpu.vf_tx_bytes': 6038160981,
+        'hv_netvsc.cpu.vf_tx_packets': 4145533,
     },
 }
 
@@ -466,207 +728,29 @@ def test_collect_ena(send_ethtool_ioctl, check):
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
-def test_collect_queue_metrics_ena(send_ethtool_ioctl, check):
+def test_collect_ethtool_metrics_ena(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
     assert (driver_name, driver_version) == ('ena', '5.11.0-1022-aws')
-    assert check._get_queue_metrics(driver_name, stats_names, stats) == ENA_QUEUE_VALUES
+    assert check._get_ethtool_metrics(driver_name, stats_names, stats) == ENA_ETHTOOL_VALUES
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
-def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
+def test_collect_ethtool_metrics_virtio(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('virtio')
     assert (driver_name, driver_version) == ('virtio_net', '1.0.0')
-    assert check._get_queue_metrics(driver_name, stats_names, stats) == {
-        'queue:0': {
-            u'virtio_net.queue.rx_bytes': 3330581189214,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 49443,
-            u'virtio_net.queue.rx_packets': 3240253467,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 729525539711,
-            u'virtio_net.queue.tx_kicks': 17882,
-            u'virtio_net.queue.tx_packets': 1171912402,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:1': {
-            u'virtio_net.queue.rx_bytes': 2943312275097,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 44975,
-            u'virtio_net.queue.rx_packets': 2947437406,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 711942138149,
-            u'virtio_net.queue.tx_kicks': 17055,
-            u'virtio_net.queue.tx_packets': 1117705342,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:2': {
-            u'virtio_net.queue.rx_bytes': 3114136399578,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 46080,
-            u'virtio_net.queue.rx_packets': 3019742569,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 715095442379,
-            u'virtio_net.queue.tx_kicks': 17149,
-            u'virtio_net.queue.tx_packets': 1123816782,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:3': {
-            u'virtio_net.queue.rx_bytes': 3017036703051,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 46688,
-            u'virtio_net.queue.rx_packets': 3059719508,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 714098071307,
-            u'virtio_net.queue.tx_kicks': 16939,
-            u'virtio_net.queue.tx_packets': 1110067614,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:4': {
-            u'virtio_net.queue.rx_bytes': 3859364388980,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 55049,
-            u'virtio_net.queue.rx_packets': 3607658361,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 723288378426,
-            u'virtio_net.queue.tx_kicks': 17745,
-            u'virtio_net.queue.tx_packets': 1162873931,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:5': {
-            u'virtio_net.queue.rx_bytes': 3638485117143,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 52996,
-            u'virtio_net.queue.rx_packets': 3473131946,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 717434286730,
-            u'virtio_net.queue.tx_kicks': 17543,
-            u'virtio_net.queue.tx_packets': 1149663211,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:6': {
-            u'virtio_net.queue.rx_bytes': 3344829702018,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 49510,
-            u'virtio_net.queue.rx_packets': 3244657039,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 712950253668,
-            u'virtio_net.queue.tx_kicks': 17528,
-            u'virtio_net.queue.tx_packets': 1148696179,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-        'queue:7': {
-            u'virtio_net.queue.rx_bytes': 3528035076384,
-            u'virtio_net.queue.rx_drops': 0,
-            u'virtio_net.queue.rx_kicks': 52167,
-            u'virtio_net.queue.rx_packets': 3418771828,
-            u'virtio_net.queue.rx_xdp_drops': 0,
-            u'virtio_net.queue.rx_xdp_packets': 0,
-            u'virtio_net.queue.rx_xdp_redirects': 0,
-            u'virtio_net.queue.rx_xdp_tx': 0,
-            u'virtio_net.queue.tx_bytes': 712418609150,
-            u'virtio_net.queue.tx_kicks': 17508,
-            u'virtio_net.queue.tx_packets': 1147383428,
-            u'virtio_net.queue.tx_xdp_tx': 0,
-            u'virtio_net.queue.tx_xdp_tx_drops': 0,
-        },
-    }
+    assert check._get_ethtool_metrics(driver_name, stats_names, stats) == VIRTIO_ETHTOOL_VALUES
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
-def test_collect_queue_metrics_hv_netvsc(send_ethtool_ioctl, check):
+def test_collect_ethtool_metrics_hv_netvsc(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('hv_netvsc')
     assert (driver_name, driver_version) == ('hv_netvsc', '5.8.0-1042-azure')
-    assert check._get_queue_metrics(driver_name, stats_names, stats) == {
-        'queue:0': {
-            'hv_netvsc.queue.rx_bytes': 69753132,
-            'hv_netvsc.queue.rx_packets': 174128,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 673523,
-            'hv_netvsc.queue.tx_packets': 367,
-        },
-        'queue:1': {
-            'hv_netvsc.queue.rx_bytes': 80536029,
-            'hv_netvsc.queue.rx_packets': 186321,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 20418,
-            'hv_netvsc.queue.tx_packets': 40,
-        },
-        'queue:2': {
-            'hv_netvsc.queue.rx_bytes': 97417257,
-            'hv_netvsc.queue.rx_packets': 190115,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 194574,
-            'hv_netvsc.queue.tx_packets': 96,
-        },
-        'queue:3': {
-            'hv_netvsc.queue.rx_bytes': 57902633,
-            'hv_netvsc.queue.rx_packets': 161989,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 43830,
-            'hv_netvsc.queue.tx_packets': 36,
-        },
-        'queue:4': {
-            'hv_netvsc.queue.rx_bytes': 57235863,
-            'hv_netvsc.queue.rx_packets': 161812,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 9700,
-            'hv_netvsc.queue.tx_packets': 17,
-        },
-        'queue:5': {
-            'hv_netvsc.queue.rx_bytes': 57347838,
-            'hv_netvsc.queue.rx_packets': 167028,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 47915,
-            'hv_netvsc.queue.tx_packets': 52,
-        },
-        'queue:6': {
-            'hv_netvsc.queue.rx_bytes': 56878203,
-            'hv_netvsc.queue.rx_packets': 166400,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 16863,
-            'hv_netvsc.queue.tx_packets': 13,
-        },
-        'queue:7': {
-            'hv_netvsc.queue.rx_bytes': 59770311,
-            'hv_netvsc.queue.rx_packets': 163608,
-            'hv_netvsc.queue.rx_xdp_drop': 0,
-            'hv_netvsc.queue.tx_bytes': 27259,
-            'hv_netvsc.queue.tx_packets': 57,
-        },
-    }
+    assert check._get_ethtool_metrics(driver_name, stats_names, stats) == HV_NETVSC_ETHTOOL_VALUES
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
@@ -675,7 +759,7 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     check._collect_ethtool_stats = True
     check._collect_ena_metrics = True
-    check._collect_queue_metrics = False
+    check._collect_ethtool_metrics = False
     check._excluded_ifaces = []
     check._exclude_iface_re = ''
     check._handle_ethtool_stats('eth0', [])
@@ -696,22 +780,43 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
-def test_submit_queue_metrics(send_ethtool_ioctl, check, aggregator):
+def test_submit_ena_ethtool_metrics(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     check._collect_ethtool_stats = True
     check._collect_ena_metrics = False
-    check._collect_queue_metrics = True
+    check._collect_ethtool_metrics = True
     check._excluded_ifaces = []
     check._exclude_iface_re = ''
     check._handle_ethtool_stats('eth0', [])
 
-    for queue, metrics in iteritems(ENA_QUEUE_VALUES):
+    for tag, metrics in iteritems(ENA_ETHTOOL_VALUES):
         for metric_suffix, value in iteritems(metrics):
             aggregator.assert_metric(
                 'system.net.' + metric_suffix,
                 count=1,
                 value=value,
-                tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws', queue],
+                tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws', tag],
+            )
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_submit_hv_netvsc_ethtool_metrics(send_ethtool_ioctl, check, aggregator):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    check._collect_ethtool_stats = True
+    check._collect_ena_metrics = False
+    check._collect_ethtool_metrics = True
+    check._excluded_ifaces = []
+    check._exclude_iface_re = ''
+    check._handle_ethtool_stats('hv_netvsc', [])
+
+    for tag, metrics in iteritems(HV_NETVSC_ETHTOOL_VALUES):
+        for metric_suffix, value in iteritems(metrics):
+            aggregator.assert_metric(
+                'system.net.' + metric_suffix,
+                count=1,
+                value=value,
+                tags=['device:hv_netvsc', 'driver_name:hv_netvsc', 'driver_version:5.8.0-1042-azure', tag],
             )
 
 
@@ -750,3 +855,18 @@ def test_get_metric_queue_name(check):
     queue_name, metric_name = check._get_metric_queue_name('rx_queue_0_packets')
     assert queue_name == 'queue:0'
     assert metric_name == 'rx_packets'
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+def test_get_metric_cpu_name(check):
+    cpu_name, metric_name = check._get_metric_cpu_name('cpu0_rx_bytes')
+    assert cpu_name == 'cpu:0'
+    assert metric_name == 'rx_bytes'
+
+    cpu_name, metric_name = check._get_metric_cpu_name('cpu_rx_bytes')
+    assert cpu_name is None
+    assert metric_name is None
+
+    cpu_name, metric_name = check._get_metric_cpu_name('rx_cpu_bytes')
+    assert cpu_name is None
+    assert metric_name is None
