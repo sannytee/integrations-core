@@ -50,6 +50,68 @@ CONNTRACK_STATS = {
     'system.net.conntrack.search_restart': (39936711, 36983181),
 }
 
+ENA_QUEUE_VALUES = {
+    'queue:0': {
+        'ena.queue.rx_bad_csum': 0,
+        'ena.queue.rx_bad_desc_num': 0,
+        'ena.queue.rx_bad_req_id': 0,
+        'ena.queue.rx_bytes': 24423973,
+        'ena.queue.rx_cnt': 18967,
+        'ena.queue.rx_csum_good': 0,
+        'ena.queue.rx_csum_unchecked': 0,
+        'ena.queue.rx_dma_mapping_err': 0,
+        'ena.queue.rx_empty_rx_ring': 0,
+        'ena.queue.rx_page_alloc_fail': 0,
+        'ena.queue.rx_refil_partial': 0,
+        'ena.queue.rx_rx_copybreak_pkt': 2394,
+        'ena.queue.rx_skb_alloc_fail': 0,
+        'ena.queue.tx_bad_req_id': 0,
+        'ena.queue.tx_bytes': 1566697,
+        'ena.queue.tx_cnt': 17841,
+        'ena.queue.tx_dma_mapping_err': 0,
+        'ena.queue.tx_doorbells': 17766,
+        'ena.queue.tx_linearize': 0,
+        'ena.queue.tx_linearize_failed': 0,
+        'ena.queue.tx_llq_buffer_copy': 0,
+        'ena.queue.tx_missed_tx': 0,
+        'ena.queue.tx_napi_comp': 21232,
+        'ena.queue.tx_prepare_ctx_err': 0,
+        'ena.queue.tx_queue_stop': 0,
+        'ena.queue.tx_queue_wakeup': 0,
+        'ena.queue.tx_tx_poll': 21232,
+        'ena.queue.tx_unmask_interrupt': 21232,
+    },
+    'queue:1': {
+        'ena.queue.rx_bad_csum': 0,
+        'ena.queue.rx_bad_desc_num': 0,
+        'ena.queue.rx_bad_req_id': 0,
+        'ena.queue.rx_bytes': 429894172,
+        'ena.queue.rx_cnt': 300129,
+        'ena.queue.rx_csum_good': 0,
+        'ena.queue.rx_csum_unchecked': 0,
+        'ena.queue.rx_dma_mapping_err': 0,
+        'ena.queue.rx_empty_rx_ring': 0,
+        'ena.queue.rx_page_alloc_fail': 0,
+        'ena.queue.rx_refil_partial': 0,
+        'ena.queue.rx_rx_copybreak_pkt': 7146,
+        'ena.queue.rx_skb_alloc_fail': 0,
+        'ena.queue.tx_bad_req_id': 0,
+        'ena.queue.tx_bytes': 1618542,
+        'ena.queue.tx_cnt': 26865,
+        'ena.queue.tx_dma_mapping_err': 0,
+        'ena.queue.tx_doorbells': 26863,
+        'ena.queue.tx_linearize': 0,
+        'ena.queue.tx_linearize_failed': 0,
+        'ena.queue.tx_llq_buffer_copy': 0,
+        'ena.queue.tx_missed_tx': 0,
+        'ena.queue.tx_napi_comp': 87481,
+        'ena.queue.tx_prepare_ctx_err': 0,
+        'ena.queue.tx_queue_stop': 0,
+        'ena.queue.tx_queue_wakeup': 0,
+        'ena.queue.tx_tx_poll': 87509,
+        'ena.queue.tx_unmask_interrupt': 87481,
+    },
+}
 
 if PY3:
     ESCAPE_ENCODING = 'unicode-escape'
@@ -378,7 +440,6 @@ def test_ss_with_custom_procfs(is_linux, is_bsd, is_solaris, is_windows, aggrega
 
 
 def send_ethtool_ioctl_mock(iface, sckt, data):
-    print(data.tostring())
     for input, result in common.ETHTOOL_IOCTL_INPUTS_OUTPUTS.items():
         if input == (iface, data.tobytes() if PY3 else data.tostring()):
             data[:] = array.array('B', [])
@@ -408,68 +469,7 @@ def test_collect_queue_metrics_ena(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
     assert (driver_name, driver_version) == ('ena', '5.11.0-1022-aws')
-    assert check._get_queue_metrics(driver_name, stats_names, stats) == {
-        'queue_0': {
-            'ena.queue.rx_bad_csum': 0,
-            'ena.queue.rx_bad_desc_num': 0,
-            'ena.queue.rx_bad_req_id': 0,
-            'ena.queue.rx_bytes': 24423973,
-            'ena.queue.rx_cnt': 18967,
-            'ena.queue.rx_csum_good': 0,
-            'ena.queue.rx_csum_unchecked': 0,
-            'ena.queue.rx_dma_mapping_err': 0,
-            'ena.queue.rx_empty_rx_ring': 0,
-            'ena.queue.rx_page_alloc_fail': 0,
-            'ena.queue.rx_refil_partial': 0,
-            'ena.queue.rx_rx_copybreak_pkt': 2394,
-            'ena.queue.rx_skb_alloc_fail': 0,
-            'ena.queue.tx_bad_req_id': 0,
-            'ena.queue.tx_bytes': 1566697,
-            'ena.queue.tx_cnt': 17841,
-            'ena.queue.tx_dma_mapping_err': 0,
-            'ena.queue.tx_doorbells': 17766,
-            'ena.queue.tx_linearize': 0,
-            'ena.queue.tx_linearize_failed': 0,
-            'ena.queue.tx_llq_buffer_copy': 0,
-            'ena.queue.tx_missed_tx': 0,
-            'ena.queue.tx_napi_comp': 21232,
-            'ena.queue.tx_prepare_ctx_err': 0,
-            'ena.queue.tx_queue_stop': 0,
-            'ena.queue.tx_queue_wakeup': 0,
-            'ena.queue.tx_tx_poll': 21232,
-            'ena.queue.tx_unmask_interrupt': 21232,
-        },
-        'queue_1': {
-            'ena.queue.rx_bad_csum': 0,
-            'ena.queue.rx_bad_desc_num': 0,
-            'ena.queue.rx_bad_req_id': 0,
-            'ena.queue.rx_bytes': 429894172,
-            'ena.queue.rx_cnt': 300129,
-            'ena.queue.rx_csum_good': 0,
-            'ena.queue.rx_csum_unchecked': 0,
-            'ena.queue.rx_dma_mapping_err': 0,
-            'ena.queue.rx_empty_rx_ring': 0,
-            'ena.queue.rx_page_alloc_fail': 0,
-            'ena.queue.rx_refil_partial': 0,
-            'ena.queue.rx_rx_copybreak_pkt': 7146,
-            'ena.queue.rx_skb_alloc_fail': 0,
-            'ena.queue.tx_bad_req_id': 0,
-            'ena.queue.tx_bytes': 1618542,
-            'ena.queue.tx_cnt': 26865,
-            'ena.queue.tx_dma_mapping_err': 0,
-            'ena.queue.tx_doorbells': 26863,
-            'ena.queue.tx_linearize': 0,
-            'ena.queue.tx_linearize_failed': 0,
-            'ena.queue.tx_llq_buffer_copy': 0,
-            'ena.queue.tx_missed_tx': 0,
-            'ena.queue.tx_napi_comp': 87481,
-            'ena.queue.tx_prepare_ctx_err': 0,
-            'ena.queue.tx_queue_stop': 0,
-            'ena.queue.tx_queue_wakeup': 0,
-            'ena.queue.tx_tx_poll': 87509,
-            'ena.queue.tx_unmask_interrupt': 87481,
-        },
-    }
+    assert check._get_queue_metrics(driver_name, stats_names, stats) == ENA_QUEUE_VALUES
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
@@ -479,7 +479,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('virtio')
     assert (driver_name, driver_version) == ('virtio_net', '1.0.0')
     assert check._get_queue_metrics(driver_name, stats_names, stats) == {
-        'queue_0': {
+        'queue:0': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 49443,
             'virtio_net.queue.rx_packets': 3240253467,
@@ -492,7 +492,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_1': {
+        'queue:1': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 44975,
             'virtio_net.queue.rx_packets': 2947437406,
@@ -505,7 +505,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_2': {
+        'queue:2': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 46080,
             'virtio_net.queue.rx_packets': 3019742569,
@@ -518,7 +518,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_3': {
+        'queue:3': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 46688,
             'virtio_net.queue.rx_packets': 3059719508,
@@ -531,7 +531,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_4': {
+        'queue:4': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 55049,
             'virtio_net.queue.rx_packets': 3607658361,
@@ -544,7 +544,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_5': {
+        'queue:5': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 52996,
             'virtio_net.queue.rx_packets': 3473131946,
@@ -557,7 +557,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_6': {
+        'queue:6': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 49510,
             'virtio_net.queue.rx_packets': 3244657039,
@@ -570,7 +570,7 @@ def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
             'virtio_net.queue.tx_xdp_tx': 0,
             'virtio_net.queue.tx_xdp_tx_drops': 0,
         },
-        'queue_7': {
+        'queue:7': {
             'virtio_net.queue.rx_drops': 0,
             'virtio_net.queue.rx_kicks': 52167,
             'virtio_net.queue.rx_packets': 3418771828,
@@ -593,56 +593,56 @@ def test_collect_queue_metrics_hv_netvsc(send_ethtool_ioctl, check):
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('hv_netvsc')
     assert (driver_name, driver_version) == ('hv_netvsc', '5.8.0-1042-azure')
     assert check._get_queue_metrics(driver_name, stats_names, stats) == {
-        'queue_0': {
+        'queue:0': {
             'hv_netvsc.queue.rx_bytes': 69753132,
             'hv_netvsc.queue.rx_packets': 174128,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 673523,
             'hv_netvsc.queue.tx_packets': 367,
         },
-        'queue_1': {
+        'queue:1': {
             'hv_netvsc.queue.rx_bytes': 80536029,
             'hv_netvsc.queue.rx_packets': 186321,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 20418,
             'hv_netvsc.queue.tx_packets': 40,
         },
-        'queue_2': {
+        'queue:2': {
             'hv_netvsc.queue.rx_bytes': 97417257,
             'hv_netvsc.queue.rx_packets': 190115,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 194574,
             'hv_netvsc.queue.tx_packets': 96,
         },
-        'queue_3': {
+        'queue:3': {
             'hv_netvsc.queue.rx_bytes': 57902633,
             'hv_netvsc.queue.rx_packets': 161989,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 43830,
             'hv_netvsc.queue.tx_packets': 36,
         },
-        'queue_4': {
+        'queue:4': {
             'hv_netvsc.queue.rx_bytes': 57235863,
             'hv_netvsc.queue.rx_packets': 161812,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 9700,
             'hv_netvsc.queue.tx_packets': 17,
         },
-        'queue_5': {
+        'queue:5': {
             'hv_netvsc.queue.rx_bytes': 57347838,
             'hv_netvsc.queue.rx_packets': 167028,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 47915,
             'hv_netvsc.queue.tx_packets': 52,
         },
-        'queue_6': {
+        'queue:6': {
             'hv_netvsc.queue.rx_bytes': 56878203,
             'hv_netvsc.queue.rx_packets': 166400,
             'hv_netvsc.queue.rx_xdp_drop': 0,
             'hv_netvsc.queue.tx_bytes': 16863,
             'hv_netvsc.queue.tx_packets': 13,
         },
-        'queue_7': {
+        'queue:7': {
             'hv_netvsc.queue.rx_bytes': 59770311,
             'hv_netvsc.queue.rx_packets': 163608,
             'hv_netvsc.queue.rx_xdp_drop': 0,
@@ -672,7 +672,30 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     ]
 
     for m in expected_metrics:
-        aggregator.assert_metric(m, count=1, value=0, tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws'])
+        aggregator.assert_metric(
+            m, count=1, value=0, tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws']
+        )
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_submit_queue_metrics(send_ethtool_ioctl, check, aggregator):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    check._collect_ethtool_stats = True
+    check._collect_ena_metrics = False
+    check._collect_queue_metrics = True
+    check._excluded_ifaces = []
+    check._exclude_iface_re = ''
+    check._handle_ethtool_stats('eth0', [])
+
+    for queue, metrics in iteritems(ENA_QUEUE_VALUES):
+        for metric_suffix, value in iteritems(metrics):
+            aggregator.assert_metric(
+                'system.net.' + metric_suffix,
+                count=1,
+                value=value,
+                tags=['device:eth0', 'driver_name:ena', 'driver_version:5.11.0-1022-aws', queue],
+            )
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
@@ -696,11 +719,11 @@ def test_collect_ena_unsupported_on_iface(ioctl_mock, check, caplog):
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 def test_get_metric_queue_name(check):
     queue_name, metric_name = check._get_metric_queue_name('queue_0_tx_cnt')
-    assert queue_name == 'queue_0'
+    assert queue_name == 'queue:0'
     assert metric_name == 'tx_cnt'
 
     queue_name, metric_name = check._get_metric_queue_name('queue_10_tx_doorbells')
-    assert queue_name == 'queue_10'
+    assert queue_name == 'queue:10'
     assert metric_name == 'tx_doorbells'
 
     queue_name, metric_name = check._get_metric_queue_name('tx_doorbells_queue_')
@@ -708,5 +731,5 @@ def test_get_metric_queue_name(check):
     assert metric_name is None
 
     queue_name, metric_name = check._get_metric_queue_name('rx_queue_0_packets')
-    assert queue_name == 'queue_0'
+    assert queue_name == 'queue:0'
     assert metric_name == 'rx_packets'
