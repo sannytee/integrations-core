@@ -856,11 +856,19 @@ def test_get_metric_queue_name(check):
     assert queue_name == 'queue:0'
     assert metric_name == 'rx_packets'
 
+    queue_name, metric_name = check._get_metric_queue_name('rx_queue_123_packets')
+    assert queue_name == 'queue:123'
+    assert metric_name == 'rx_packets'
+
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 def test_get_metric_cpu_name(check):
     cpu_name, metric_name = check._get_metric_cpu_name('cpu0_rx_bytes')
     assert cpu_name == 'cpu:0'
+    assert metric_name == 'rx_bytes'
+
+    cpu_name, metric_name = check._get_metric_cpu_name('cpu431_rx_bytes')
+    assert cpu_name == 'cpu:431'
     assert metric_name == 'rx_bytes'
 
     cpu_name, metric_name = check._get_metric_cpu_name('cpu_rx_bytes')
