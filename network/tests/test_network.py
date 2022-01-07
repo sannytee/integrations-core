@@ -57,7 +57,6 @@ if PY3:
     def decode_string(s):
         return s.decode(ESCAPE_ENCODING)
 
-
 else:
     ESCAPE_ENCODING = 'string-escape'
 
@@ -379,6 +378,7 @@ def test_ss_with_custom_procfs(is_linux, is_bsd, is_solaris, is_windows, aggrega
 
 
 def send_ethtool_ioctl_mock(iface, sckt, data):
+    print(data.tostring())
     for input, result in common.ETHTOOL_IOCTL_INPUTS_OUTPUTS.items():
         if input == (iface, data.tobytes() if PY3 else data.tostring()):
             data[:] = array.array('B', [])
@@ -391,7 +391,8 @@ def send_ethtool_ioctl_mock(iface, sckt, data):
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_collect_ena(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    stats_names, stats = check._fetch_ethtool_stats('eth0')
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
+    assert (driver_name, driver_version) == (u'ena', u'5.11.0-1022-aws')
     assert check._get_ena_metrics(stats_names, stats) == {
         'aws.ec2.bw_in_allowance_exceeded': 0,
         'aws.ec2.bw_out_allowance_exceeded': 0,
@@ -403,78 +404,202 @@ def test_collect_ena(send_ethtool_ioctl, check):
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
-def test_collect_queue_metrics(send_ethtool_ioctl, check):
+def test_collect_queue_metrics_ena(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    stats_names, stats = check._fetch_ethtool_stats('eth0')
-    assert check._get_queue_metrics(stats_names, stats) == {
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
+    assert (driver_name, driver_version) == (u'ena', u'5.11.0-1022-aws')
+    assert check._get_queue_metrics(driver_name, stats_names, stats) == {
         'queue_0': {
-            'queue.rx_bad_csum': 0,
-            'queue.rx_bad_desc_num': 0,
-            'queue.rx_bad_req_id': 0,
-            'queue.rx_bytes': 24423973,
-            'queue.rx_cnt': 18967,
-            'queue.rx_csum_good': 0,
-            'queue.rx_csum_unchecked': 0,
-            'queue.rx_dma_mapping_err': 0,
-            'queue.rx_empty_rx_ring': 0,
-            'queue.rx_page_alloc_fail': 0,
-            'queue.rx_refil_partial': 0,
-            'queue.rx_rx_copybreak_pkt': 2394,
-            'queue.rx_skb_alloc_fail': 0,
-            'queue.tx_bad_req_id': 0,
-            'queue.tx_bytes': 1566697,
-            'queue.tx_cnt': 17841,
-            'queue.tx_dma_mapping_err': 0,
-            'queue.tx_doorbells': 17766,
-            'queue.tx_linearize': 0,
-            'queue.tx_linearize_failed': 0,
-            'queue.tx_llq_buffer_copy': 0,
-            'queue.tx_missed_tx': 0,
-            'queue.tx_napi_comp': 21232,
-            'queue.tx_prepare_ctx_err': 0,
-            'queue.tx_queue_stop': 0,
-            'queue.tx_queue_wakeup': 0,
-            'queue.tx_tx_poll': 21232,
-            'queue.tx_unmask_interrupt': 21232,
+            'queue.ena.rx_bad_csum': 0,
+            'queue.ena.rx_bad_desc_num': 0,
+            'queue.ena.rx_bad_req_id': 0,
+            'queue.ena.rx_bytes': 24423973,
+            'queue.ena.rx_cnt': 18967,
+            'queue.ena.rx_csum_good': 0,
+            'queue.ena.rx_csum_unchecked': 0,
+            'queue.ena.rx_dma_mapping_err': 0,
+            'queue.ena.rx_empty_rx_ring': 0,
+            'queue.ena.rx_page_alloc_fail': 0,
+            'queue.ena.rx_refil_partial': 0,
+            'queue.ena.rx_rx_copybreak_pkt': 2394,
+            'queue.ena.rx_skb_alloc_fail': 0,
+            'queue.ena.tx_bad_req_id': 0,
+            'queue.ena.tx_bytes': 1566697,
+            'queue.ena.tx_cnt': 17841,
+            'queue.ena.tx_dma_mapping_err': 0,
+            'queue.ena.tx_doorbells': 17766,
+            'queue.ena.tx_linearize': 0,
+            'queue.ena.tx_linearize_failed': 0,
+            'queue.ena.tx_llq_buffer_copy': 0,
+            'queue.ena.tx_missed_tx': 0,
+            'queue.ena.tx_napi_comp': 21232,
+            'queue.ena.tx_prepare_ctx_err': 0,
+            'queue.ena.tx_queue_stop': 0,
+            'queue.ena.tx_queue_wakeup': 0,
+            'queue.ena.tx_tx_poll': 21232,
+            'queue.ena.tx_unmask_interrupt': 21232,
         },
         'queue_1': {
-            'queue.rx_bad_csum': 0,
-            'queue.rx_bad_desc_num': 0,
-            'queue.rx_bad_req_id': 0,
-            'queue.rx_bytes': 429894172,
-            'queue.rx_cnt': 300129,
-            'queue.rx_csum_good': 0,
-            'queue.rx_csum_unchecked': 0,
-            'queue.rx_dma_mapping_err': 0,
-            'queue.rx_empty_rx_ring': 0,
-            'queue.rx_page_alloc_fail': 0,
-            'queue.rx_refil_partial': 0,
-            'queue.rx_rx_copybreak_pkt': 7146,
-            'queue.rx_skb_alloc_fail': 0,
-            'queue.tx_bad_req_id': 0,
-            'queue.tx_bytes': 1618542,
-            'queue.tx_cnt': 26865,
-            'queue.tx_dma_mapping_err': 0,
-            'queue.tx_doorbells': 26863,
-            'queue.tx_linearize': 0,
-            'queue.tx_linearize_failed': 0,
-            'queue.tx_llq_buffer_copy': 0,
-            'queue.tx_missed_tx': 0,
-            'queue.tx_napi_comp': 87481,
-            'queue.tx_prepare_ctx_err': 0,
-            'queue.tx_queue_stop': 0,
-            'queue.tx_queue_wakeup': 0,
-            'queue.tx_tx_poll': 87509,
-            'queue.tx_unmask_interrupt': 87481,
+            'queue.ena.rx_bad_csum': 0,
+            'queue.ena.rx_bad_desc_num': 0,
+            'queue.ena.rx_bad_req_id': 0,
+            'queue.ena.rx_bytes': 429894172,
+            'queue.ena.rx_cnt': 300129,
+            'queue.ena.rx_csum_good': 0,
+            'queue.ena.rx_csum_unchecked': 0,
+            'queue.ena.rx_dma_mapping_err': 0,
+            'queue.ena.rx_empty_rx_ring': 0,
+            'queue.ena.rx_page_alloc_fail': 0,
+            'queue.ena.rx_refil_partial': 0,
+            'queue.ena.rx_rx_copybreak_pkt': 7146,
+            'queue.ena.rx_skb_alloc_fail': 0,
+            'queue.ena.tx_bad_req_id': 0,
+            'queue.ena.tx_bytes': 1618542,
+            'queue.ena.tx_cnt': 26865,
+            'queue.ena.tx_dma_mapping_err': 0,
+            'queue.ena.tx_doorbells': 26863,
+            'queue.ena.tx_linearize': 0,
+            'queue.ena.tx_linearize_failed': 0,
+            'queue.ena.tx_llq_buffer_copy': 0,
+            'queue.ena.tx_missed_tx': 0,
+            'queue.ena.tx_napi_comp': 87481,
+            'queue.ena.tx_prepare_ctx_err': 0,
+            'queue.ena.tx_queue_stop': 0,
+            'queue.ena.tx_queue_wakeup': 0,
+            'queue.ena.tx_tx_poll': 87509,
+            'queue.ena.tx_unmask_interrupt': 87481,
         },
     }
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_collect_queue_metrics_virtio(send_ethtool_ioctl, check):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('virtio')
+    assert (driver_name, driver_version) == ('virtio_net', '1.0.0')
+    assert check._get_queue_metrics(driver_name, stats_names, stats) == {
+        'queue_0': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 49443,
+            'queue.virtio_net.rx_packets': 3240253467,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17882,
+            'queue.virtio_net.tx_packets': 1171912402,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_1': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 44975,
+            'queue.virtio_net.rx_packets': 2947437406,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17055,
+            'queue.virtio_net.tx_packets': 1117705342,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_2': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 46080,
+            'queue.virtio_net.rx_packets': 3019742569,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17149,
+            'queue.virtio_net.tx_packets': 1123816782,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_3': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 46688,
+            'queue.virtio_net.rx_packets': 3059719508,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 16939,
+            'queue.virtio_net.tx_packets': 1110067614,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_4': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 55049,
+            'queue.virtio_net.rx_packets': 3607658361,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17745,
+            'queue.virtio_net.tx_packets': 1162873931,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_5': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 52996,
+            'queue.virtio_net.rx_packets': 3473131946,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17543,
+            'queue.virtio_net.tx_packets': 1149663211,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_6': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 49510,
+            'queue.virtio_net.rx_packets': 3244657039,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17528,
+            'queue.virtio_net.tx_packets': 1148696179,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+        'queue_7': {
+            'queue.virtio_net.rx_drops': 0,
+            'queue.virtio_net.rx_kicks': 52167,
+            'queue.virtio_net.rx_packets': 3418771828,
+            'queue.virtio_net.rx_xdp_drops': 0,
+            'queue.virtio_net.rx_xdp_packets': 0,
+            'queue.virtio_net.rx_xdp_redirects': 0,
+            'queue.virtio_net.rx_xdp_tx': 0,
+            'queue.virtio_net.tx_kicks': 17508,
+            'queue.virtio_net.tx_packets': 1147383428,
+            'queue.virtio_net.tx_xdp_tx': 0,
+            'queue.virtio_net.tx_xdp_tx_drops': 0,
+        },
+    }
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_collect_queue_metrics_hv_netvsc(send_ethtool_ioctl, check):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('hv_netvsc')
+    assert (driver_name, driver_version) == (u'hv_netvsc', u'5.8.0-1042-azure')
+    assert check._get_queue_metrics(driver_name, stats_names, stats) == {}
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    stats_names, stats = check._fetch_ethtool_stats('eth0')
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('eth0')
     metrics = check._get_ena_metrics(stats_names, stats)
     check._excluded_ifaces = []
     check._exclude_iface_re = ''
@@ -496,7 +621,8 @@ def test_submit_ena(send_ethtool_ioctl, check, aggregator):
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_collect_ena_values_not_present(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
-    stats_names, stats = check._fetch_ethtool_stats('enp0s3')
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('enp0s3')
+    assert (driver_name, driver_version) == (None, None)
     assert check._get_ena_metrics(stats_names, stats) == {}
 
 
@@ -505,7 +631,7 @@ def test_collect_ena_values_not_present(send_ethtool_ioctl, check):
 def test_collect_ena_unsupported_on_iface(ioctl_mock, check, caplog):
     caplog.set_level(logging.DEBUG)
     ioctl_mock.side_effect = OSError('mock error')
-    _, _ = check._fetch_ethtool_stats('eth0')
+    _, _, _, _ = check._fetch_ethtool_stats('eth0')
     assert 'OSError while trying to collect ethtool metrics for interface eth0: mock error' in caplog.text
 
 
