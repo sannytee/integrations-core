@@ -168,6 +168,44 @@ QUEUE_METRICS_NAMES = {
         "tx_xdp_tx",
         "tx_xdp_tx_drops",
     ],
+    # Example of output of ethtool -S iface with hv_netvsc driver:
+    #  tx_queue_0_packets: 408
+    #  tx_queue_0_bytes: 62025
+    #  rx_queue_0_packets: 91312
+    #  rx_queue_0_bytes: 64734440
+    #  rx_queue_0_xdp_drop: 0
+    #  tx_queue_1_packets: 0
+    #  tx_queue_1_bytes: 0
+    #  rx_queue_1_packets: 90945
+    #  rx_queue_1_bytes: 66515649
+    #  rx_queue_1_xdp_drop: 0
+    #  cpu0_rx_packets: 90021
+    #  cpu0_rx_bytes: 60954160
+    #  cpu0_tx_packets: 2307011
+    #  cpu0_tx_bytes: 996614053
+    #  cpu0_vf_rx_packets: 762
+    #  cpu0_vf_rx_bytes: 1730037
+    #  cpu0_vf_tx_packets: 2307011
+    #  cpu0_vf_tx_bytes: 996614053
+    #  cpu1_rx_packets: 376562
+    #  cpu1_rx_bytes: 665669328
+    #  cpu1_tx_packets: 3176489
+    #  cpu1_tx_bytes: 436967327
+    #  cpu1_vf_rx_packets: 266749
+    #  cpu1_vf_rx_bytes: 593435159
+    #  cpu1_vf_tx_packets: 3176489
+    #  cpu1_vf_tx_bytes: 436967327
+    'hv_netvsc': [
+        'tx_packets',
+        'tx_bytes',
+        'rx_packets',
+        'rx_bytes',
+        'rx_xdp_drop',
+        'vf_rx_packets',
+        'vf_rx_bytes',
+        'vf_tx_packets',
+        'vf_tx_bytes',
+    ],
 }
 
 
@@ -1232,7 +1270,7 @@ class Network(AgentCheck):
             if metric_name in QUEUE_METRICS_NAMES[driver_name]:
                 offset = 8 + 8 * i
                 value = struct.unpack('Q', stats[offset : offset + 8])[0]
-                queue_metrics[queue_name][QUEUE_METRIC_PREFIX + driver_name + '.' + metric_name] = value
+                queue_metrics[queue_name][driver_name + '.' + QUEUE_METRIC_PREFIX + metric_name] = value
 
         return queue_metrics
 
