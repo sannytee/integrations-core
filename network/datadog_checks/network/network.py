@@ -1277,7 +1277,7 @@ class Network(AgentCheck):
 
     def _get_ethtool_metrics(self, driver_name, stats_names, stats):
         """
-        Get all ethtool metrics specified in QUEUE_METRICS_NAMES list and their values from ethtool.
+        Get all ethtool metrics specified in ETHTOOL_METRIC_NAMES list and their values from ethtool.
         We convert the queue and cpu number to a tag: queue_0_tx_cnt will be submitted as tx_cnt with the tag queue:0
 
         Return [tag][metric] -> value
