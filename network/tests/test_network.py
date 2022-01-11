@@ -375,6 +375,85 @@ HV_NETVSC_ETHTOOL_VALUES = {
     },
 }
 
+GVE_ETHTOOL_VALUES = {
+    'queue:0': {
+        'gve.queue.rx_bytes': 540727,
+        'gve.queue.rx_completed_desc': 855,
+        'gve.queue.rx_copied_pkt': 490,
+        'gve.queue.rx_copybreak_pkt': 490,
+        'gve.queue.rx_dropped_pkt': 0,
+        'gve.queue.rx_drops_invalid_checksum': 0,
+        'gve.queue.rx_drops_packet_over_mru': 0,
+        'gve.queue.rx_no_buffers_posted': 0,
+        'gve.queue.rx_posted_desc': 1879,
+        'gve.queue.rx_queue_drop_cnt': 0,
+        'gve.queue.tx_bytes': 215568,
+        'gve.queue.tx_completed_desc': 2746,
+        'gve.queue.tx_dma_mapping_error': 0,
+        'gve.queue.tx_event_counter': 2746,
+        'gve.queue.tx_posted_desc': 2746,
+        'gve.queue.tx_stop': 0,
+        'gve.queue.tx_wake': 0,
+    },
+    'queue:1': {
+        'gve.queue.rx_bytes': 382521468,
+        'gve.queue.rx_completed_desc': 262265,
+        'gve.queue.rx_copied_pkt': 172283,
+        'gve.queue.rx_copybreak_pkt': 1010,
+        'gve.queue.rx_dropped_pkt': 0,
+        'gve.queue.rx_drops_invalid_checksum': 0,
+        'gve.queue.rx_drops_packet_over_mru': 0,
+        'gve.queue.rx_no_buffers_posted': 0,
+        'gve.queue.rx_posted_desc': 263289,
+        'gve.queue.rx_queue_drop_cnt': 0,
+        'gve.queue.tx_bytes': 518657,
+        'gve.queue.tx_completed_desc': 6998,
+        'gve.queue.tx_dma_mapping_error': 0,
+        'gve.queue.tx_event_counter': 6998,
+        'gve.queue.tx_posted_desc': 6998,
+        'gve.queue.tx_stop': 0,
+        'gve.queue.tx_wake': 0,
+    },
+    'queue:2': {
+        'gve.queue.rx_bytes': 440781191,
+        'gve.queue.rx_completed_desc': 301858,
+        'gve.queue.rx_copied_pkt': 219260,
+        'gve.queue.rx_copybreak_pkt': 795,
+        'gve.queue.rx_dropped_pkt': 0,
+        'gve.queue.rx_drops_invalid_checksum': 0,
+        'gve.queue.rx_drops_packet_over_mru': 0,
+        'gve.queue.rx_no_buffers_posted': 0,
+        'gve.queue.rx_posted_desc': 302882,
+        'gve.queue.rx_queue_drop_cnt': 0,
+        'gve.queue.tx_bytes': 499988,
+        'gve.queue.tx_completed_desc': 6928,
+        'gve.queue.tx_dma_mapping_error': 0,
+        'gve.queue.tx_event_counter': 6928,
+        'gve.queue.tx_posted_desc': 6928,
+        'gve.queue.tx_stop': 0,
+        'gve.queue.tx_wake': 0,
+    },
+    'queue:3': {
+        'gve.queue.rx_bytes': 26742505,
+        'gve.queue.rx_completed_desc': 18895,
+        'gve.queue.rx_copied_pkt': 4889,
+        'gve.queue.rx_copybreak_pkt': 533,
+        'gve.queue.rx_dropped_pkt': 0,
+        'gve.queue.rx_drops_invalid_checksum': 0,
+        'gve.queue.rx_drops_packet_over_mru': 0,
+        'gve.queue.rx_no_buffers_posted': 0,
+        'gve.queue.rx_posted_desc': 19919,
+        'gve.queue.rx_queue_drop_cnt': 0,
+        'gve.queue.tx_bytes': 168545,
+        'gve.queue.tx_completed_desc': 1971,
+        'gve.queue.tx_dma_mapping_error': 0,
+        'gve.queue.tx_event_counter': 1971,
+        'gve.queue.tx_posted_desc': 1971,
+        'gve.queue.tx_stop': 0,
+        'gve.queue.tx_wake': 0,
+    },
+}
+
 if PY3:
     ESCAPE_ENCODING = 'unicode-escape'
 
@@ -755,6 +834,15 @@ def test_collect_ethtool_metrics_hv_netvsc(send_ethtool_ioctl, check):
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_collect_ethtool_metrics_gve(send_ethtool_ioctl, check):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('gve')
+    assert (driver_name, driver_version) == ('gve', '1.0.0')
+    assert check._get_ethtool_metrics(driver_name, stats_names, stats) == GVE_ETHTOOL_VALUES
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_submit_ena(send_ethtool_ioctl, check, aggregator):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     check._collect_ethtool_stats = True
@@ -822,6 +910,27 @@ def test_submit_hv_netvsc_ethtool_metrics(send_ethtool_ioctl, check, aggregator)
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
 @mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
+def test_submit_gve_ethtool_metrics(send_ethtool_ioctl, check, aggregator):
+    send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
+    check._collect_ethtool_stats = True
+    check._collect_ena_metrics = False
+    check._collect_ethtool_metrics = True
+    check._excluded_ifaces = []
+    check._exclude_iface_re = ''
+    check._handle_ethtool_stats('gve', [])
+
+    for tag, metrics in iteritems(GVE_ETHTOOL_VALUES):
+        for metric_suffix, value in iteritems(metrics):
+            aggregator.assert_metric(
+                'system.net.' + metric_suffix,
+                count=1,
+                value=value,
+                tags=['device:gve', 'driver_name:gve', 'driver_version:1.0.0', tag],
+            )
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+@mock.patch('datadog_checks.network.network.Network._send_ethtool_ioctl')
 def test_collect_ena_values_not_present(send_ethtool_ioctl, check):
     send_ethtool_ioctl.side_effect = send_ethtool_ioctl_mock
     driver_name, driver_version, stats_names, stats = check._fetch_ethtool_stats('enp0s3')
@@ -839,42 +948,65 @@ def test_collect_ena_unsupported_on_iface(ioctl_mock, check, caplog):
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
-def test_get_metric_queue_name(check):
-    queue_name, metric_name = check._get_metric_queue_name('queue_0_tx_cnt')
+def test_parse_queue_num(check):
+    queue_name, metric_name = check._parse_ethtool_queue_num('queue_0_tx_cnt')
     assert queue_name == 'queue:0'
     assert metric_name == 'tx_cnt'
 
-    queue_name, metric_name = check._get_metric_queue_name('queue_10_tx_doorbells')
+    queue_name, metric_name = check._parse_ethtool_queue_num('queue_10_tx_doorbells')
     assert queue_name == 'queue:10'
     assert metric_name == 'tx_doorbells'
 
-    queue_name, metric_name = check._get_metric_queue_name('tx_doorbells_queue_')
+    queue_name, metric_name = check._parse_ethtool_queue_num('tx_doorbells_queue_')
     assert queue_name is None
     assert metric_name is None
 
-    queue_name, metric_name = check._get_metric_queue_name('rx_queue_0_packets')
+    queue_name, metric_name = check._parse_ethtool_queue_num('rx_queue_0_packets')
     assert queue_name == 'queue:0'
     assert metric_name == 'rx_packets'
 
-    queue_name, metric_name = check._get_metric_queue_name('rx_queue_123_packets')
+    queue_name, metric_name = check._parse_ethtool_queue_num('rx_queue_123_packets')
     assert queue_name == 'queue:123'
     assert metric_name == 'rx_packets'
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
-def test_get_metric_cpu_name(check):
-    cpu_name, metric_name = check._get_metric_cpu_name('cpu0_rx_bytes')
+def test_parse_cpu_num(check):
+    cpu_name, metric_name = check._parse_ethtool_cpu_num('cpu0_rx_bytes')
     assert cpu_name == 'cpu:0'
     assert metric_name == 'rx_bytes'
 
-    cpu_name, metric_name = check._get_metric_cpu_name('cpu431_rx_bytes')
+    cpu_name, metric_name = check._parse_ethtool_cpu_num('cpu431_rx_bytes')
     assert cpu_name == 'cpu:431'
     assert metric_name == 'rx_bytes'
 
-    cpu_name, metric_name = check._get_metric_cpu_name('cpu_rx_bytes')
+    cpu_name, metric_name = check._parse_ethtool_cpu_num('cpu_rx_bytes')
     assert cpu_name is None
     assert metric_name is None
 
-    cpu_name, metric_name = check._get_metric_cpu_name('rx_cpu_bytes')
+    cpu_name, metric_name = check._parse_ethtool_cpu_num('rx_cpu_bytes')
     assert cpu_name is None
+    assert metric_name is None
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Only runs on Unix systems")
+def test_parse_queue_array(check):
+    queue_name, metric_name = check._parse_ethtool_queue_array('tx_wake[0]')
+    assert queue_name == 'queue:0'
+    assert metric_name == 'tx_wake'
+
+    queue_name, metric_name = check._parse_ethtool_queue_array('tx_dma_mapping_error[123]')
+    assert queue_name == 'queue:123'
+    assert metric_name == 'tx_dma_mapping_error'
+
+    queue_name, metric_name = check._parse_ethtool_queue_array('tx_wake[0]]')
+    assert queue_name is None
+    assert metric_name is None
+
+    queue_name, metric_name = check._parse_ethtool_queue_array('tx[_wake[0]')
+    assert queue_name is None
+    assert metric_name is None
+
+    queue_name, metric_name = check._parse_ethtool_queue_array('[1]tx_wake[0]')
+    assert queue_name is None
     assert metric_name is None

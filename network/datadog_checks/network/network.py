@@ -207,6 +207,91 @@ ETHTOOL_METRIC_NAMES = {
         'vf_tx_packets',
         'vf_tx_bytes',
     ],
+    # ethtool output on an instance with gvnic:
+    #      rx_packets: 584088
+    #      tx_packets: 17643
+    #      rx_bytes: 850689306
+    #      tx_bytes: 1420648
+    #      rx_dropped: 0
+    #      tx_dropped: 0
+    #      tx_timeouts: 0
+    #      rx_skb_alloc_fail: 0
+    #      rx_buf_alloc_fail: 0
+    #      rx_desc_err_dropped_pkt: 0
+    #      interface_up_cnt: 1
+    #      interface_down_cnt: 0
+    #      reset_cnt: 0
+    #      page_alloc_fail: 0
+    #      dma_mapping_error: 0
+    #      stats_report_trigger_cnt: 0
+    #      rx_posted_desc[0]: 1937
+    #      rx_completed_desc[0]: 913
+    #      rx_bytes[0]: 558287
+    #      rx_dropped_pkt[0]: 0
+    #      rx_copybreak_pkt[0]: 538
+    #      rx_copied_pkt[0]: 538
+    #      rx_queue_drop_cnt[0]: 0
+    #      rx_no_buffers_posted[0]: 0
+    #      rx_drops_packet_over_mru[0]: 0
+    #      rx_drops_invalid_checksum[0]: 0
+    #      rx_posted_desc[1]: 263357
+    #      rx_completed_desc[1]: 262333
+    #      rx_bytes[1]: 382572185
+    #      rx_dropped_pkt[1]: 0
+    #      rx_copybreak_pkt[1]: 1036
+    #      rx_copied_pkt[1]: 172309
+    #      rx_queue_drop_cnt[1]: 0
+    #      rx_no_buffers_posted[1]: 0
+    #      rx_drops_packet_over_mru[1]: 0
+    #      rx_drops_invalid_checksum[1]: 0
+    #      tx_posted_desc[0]: 2829
+    #      tx_completed_desc[0]: 2829
+    #      tx_bytes[0]: 221475
+    #      tx_wake[0]: 0
+    #      tx_stop[0]: 0
+    #      tx_event_counter[0]: 2829
+    #      tx_dma_mapping_error[0]: 0
+    #      tx_posted_desc[1]: 7051
+    #      tx_completed_desc[1]: 7051
+    #      tx_bytes[1]: 522327
+    #      tx_wake[1]: 0
+    #      tx_stop[1]: 0
+    #      tx_event_counter[1]: 7051
+    #      tx_dma_mapping_error[1]: 0
+    #      adminq_prod_cnt: 25
+    #      adminq_cmd_fail: 0
+    #      adminq_timeouts: 0
+    #      adminq_describe_device_cnt: 1
+    #      adminq_cfg_device_resources_cnt: 1
+    #      adminq_register_page_list_cnt: 8
+    #      adminq_unregister_page_list_cnt: 0
+    #      adminq_create_tx_queue_cnt: 4
+    #      adminq_create_rx_queue_cnt: 4
+    #      adminq_destroy_tx_queue_cnt: 0
+    #      adminq_destroy_rx_queue_cnt: 0
+    #      adminq_dcfg_device_resources_cnt: 0
+    #      adminq_set_driver_parameter_cnt: 0
+    #      adminq_report_stats_cnt: 1
+    #      adminq_report_link_speed_cnt: 6
+    'gve': [
+        'rx_posted_desc',
+        'rx_completed_desc',
+        'rx_bytes',
+        'rx_dropped_pkt',
+        'rx_copybreak_pkt',
+        'rx_copied_pkt',
+        'rx_queue_drop_cnt',
+        'rx_no_buffers_posted',
+        'rx_drops_packet_over_mru',
+        'rx_drops_invalid_checksum',
+        'tx_posted_desc',
+        'tx_completed_desc',
+        'tx_bytes',
+        'tx_wake',
+        'tx_stop',
+        'tx_event_counter',
+        'tx_dma_mapping_error',
+    ],
 }
 
 
@@ -1242,7 +1327,7 @@ class Network(AgentCheck):
         self._send_ethtool_ioctl(iface, sckt, stats)
         return stats_names, stats
 
-    def _get_metric_queue_name(self, stat_name):
+    def _parse_ethtool_queue_num(self, stat_name):
         """
         Extract the queue and the metric name from ethtool stat name:
         queue_0_tx_cnt -> (queue:0, tx_cnt)
@@ -1261,7 +1346,23 @@ class Network(AgentCheck):
         parts.pop(queue_index)
         return 'queue:{}'.format(queue_num), '_'.join(parts)
 
-    def _get_metric_cpu_name(self, stat_name):
+    def _parse_ethtool_queue_array(self, stat_name):
+        """
+        Extract the queue and the metric name from ethtool stat name:
+        tx_stop[0] -> (queue:0, tx_stop)
+        """
+        if '[' not in stat_name or not stat_name.endswith(']'):
+            return None, None
+        parts = stat_name.split('[')
+        if len(parts) != 2:
+            return None, None
+        metric_name = parts[0]
+        queue_num = parts[1][:-1]
+        if not queue_num.isdigit():
+            return None, None
+        return 'queue:{}'.format(queue_num), metric_name
+
+    def _parse_ethtool_cpu_num(self, stat_name):
         """
         Extract the cpu and the metric name from ethtool stat name:
         cpu0_rx_bytes -> (cpu:0, rx_bytes)
@@ -1286,13 +1387,16 @@ class Network(AgentCheck):
         if driver_name not in ETHTOOL_METRIC_NAMES:
             return ethtool_metrics
         for i, stat_name in enumerate(stats_names):
-            tag, metric_name = self._get_metric_queue_name(stat_name)
+            tag, metric_name = self._parse_ethtool_queue_num(stat_name)
             metric_prefix = '.queue.'
             if not tag:
-                tag, metric_name = self._get_metric_cpu_name(stat_name)
+                tag, metric_name = self._parse_ethtool_cpu_num(stat_name)
                 metric_prefix = '.cpu.'
-                if not tag:
-                    continue
+            if not tag:
+                tag, metric_name = self._parse_ethtool_queue_array(stat_name)
+                metric_prefix = '.queue.'
+            if not tag:
+                continue
             if metric_name in ETHTOOL_METRIC_NAMES[driver_name]:
                 offset = 8 + 8 * i
                 value = struct.unpack('Q', stats[offset : offset + 8])[0]
