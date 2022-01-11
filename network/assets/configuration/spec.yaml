@@ -152,6 +152,7 @@ files:
               - ena
               - virtio_net
               - hv_netvsc
+              - gve
             value:
               display_default: false
               example: false

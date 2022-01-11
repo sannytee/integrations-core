@@ -130,6 +130,7 @@ instances:
     ## - ena
     ## - virtio_net
     ## - hv_netvsc
+    ## - gve
     #
     # collect_ethtool_metrics: false
 
