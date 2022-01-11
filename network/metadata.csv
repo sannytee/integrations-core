@@ -206,3 +206,20 @@ system.net.hv_netvsc.cpu.tx_packets,count,,packet,second,The number of sent pack
 system.net.hv_netvsc.cpu.vf_tx_packets,count,,packet,second,The number of sent packets processed by a cpu using virtual function.,0,system,hv cpu vf tx pkts
 system.net.hv_netvsc.cpu.tx_bytes,count,,byte,second,The number of sent bytes processed by a cpu.,0,system,hv cpu tx bytes
 system.net.hv_netvsc.cpu.vf_tx_bytes,count,,byte,second,The number of sent packets processed by a cpu using virtual function.,0,system,hv cpu vf tx bytes
+system.net.gve.queue.rx_posted_desc,count,,unit,,The number of descriptors posted on a receive queue.,0,system,gve rx posted
+system.net.gve.queue.rx_completed_desc,count,,unit,,The number of descriptors completed on a receive queue.,0,system,gve rx compl
+system.net.gve.queue.rx_bytes,count,,byte,second,The number of bytes sent by a receveive queue.,0,system,gve rx bytes
+system.net.gve.queue.rx_dropped_pkt,count,,packet,second,The number of packets dropped because of descriptor errors.,-1,system,gve rx drop
+system.net.gve.queue.rx_copybreak_pkt,count,,packet,second,The number of packets copied to the socket buffer header because they are smaller than the copybreak threshold.,0,system,gve rx copybreak
+system.net.gve.queue.rx_copied_pkt,count,,packet,second,The number of packets copied.,0,system,gve rx copy
+system.net.gve.queue.rx_queue_drop_cnt,count,,packet,second,The number of packets dropped (stats from NIC).,-1,system,gve rx drop cnt
+system.net.gve.queue.rx_no_buffers_posted,count,,unit,,The number of times there's no available buffer for posting descriptor (stats from NIC).,-1,system,gve rx no buffers
+system.net.gve.queue.rx_drops_packet_over_mru,count,,packet,second,The number of packets dropped because it exceeds the Maximum Receive Unit (stats from NIC).,-1,system,gve rx drop mru
+system.net.gve.queue.rx_drops_invalid_checksum,count,,packet,second,The number of packets dropped because due to invalid checksum (stats from NIC).,-1,system,gve rx inv checksum
+system.net.gve.queue.tx_posted_desc,count,,unit,,The number of descriptors posted on a transmit queue,0,system,gve tx posted
+system.net.gve.queue.tx_completed_desc,count,,unit,,The number of descriptors completed on a transmit queue,0,system,gve tx compl
+system.net.gve.queue.tx_bytes,count,,byte,second,The number of bytes sent by a transmit queue.,0,system,gve tx bytes
+system.net.gve.queue.tx_wake,count,,unit,,The number of time the transmit queue was woken up.,0,system,gve tx wake
+system.net.gve.queue.tx_stop,count,,unit,,The number of time the transmit queue was stopped.,0,system,gve tx stop
+system.net.gve.queue.tx_event_counter,count,,unit,,The number of event for this transmit queue.,0,system,gve tx event
+system.net.gve.queue.tx_dma_mapping_error,count,,unit,,The number of Direct Memory Access mapping errors for a transmit queue.,-1,system,gve dma err
