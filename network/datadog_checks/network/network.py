@@ -197,11 +197,13 @@ ETHTOOL_METRIC_NAMES = {
     #  cpu1_vf_tx_packets: 3176489
     #  cpu1_vf_tx_bytes: 436967327
     'hv_netvsc': [
+        # Per queue metrics
         'tx_packets',
         'tx_bytes',
         'rx_packets',
         'rx_bytes',
         'rx_xdp_drop',
+        # Per cpu metrics
         'vf_rx_packets',
         'vf_rx_bytes',
         'vf_tx_packets',
@@ -291,6 +293,35 @@ ETHTOOL_METRIC_NAMES = {
         'tx_stop',
         'tx_event_counter',
         'tx_dma_mapping_error',
+    ],
+}
+
+ETHTOOL_GLOBAL_METRIC_NAMES = {
+    'ena': [
+        'tx_timeout',
+        'suspend',
+        'resume',
+        'wd_expired',
+    ],
+    'hv_netvsc': [
+        'tx_scattered',
+        'tx_no_memory',
+        'tx_no_space',
+        'tx_too_big',
+        'tx_busy',
+        'tx_send_full',
+        'rx_comp_busy',
+        'rx_no_memory',
+        'stop_queue',
+        'wake_queue',
+    ],
+    'gve': [
+        'tx_timeouts',
+        'rx_skb_alloc_fail',
+        'rx_buf_alloc_fail',
+        'rx_desc_err_dropped_pkt',
+        'page_alloc_fail',
+        'dma_mapping_error',
     ],
 }
 
@@ -1376,6 +1407,11 @@ class Network(AgentCheck):
         parts.pop(0)
         return 'cpu:{}'.format(cpu_num), '_'.join(parts)
 
+    def _get_stat_value(self, stats, index):
+        offset = 8 + 8 * index
+        value = struct.unpack('Q', stats[offset : offset + 8])[0]
+        return value
+
     def _get_ethtool_metrics(self, driver_name, stats_names, stats):
         """
         Get all ethtool metrics specified in ETHTOOL_METRIC_NAMES list and their values from ethtool.
@@ -1383,9 +1419,10 @@ class Network(AgentCheck):
 
         Return [tag][metric] -> value
         """
-        ethtool_metrics = defaultdict(dict)
+        res = defaultdict(dict)
         if driver_name not in ETHTOOL_METRIC_NAMES:
-            return ethtool_metrics
+            return res
+        ethtool_global_metrics = ETHTOOL_GLOBAL_METRIC_NAMES.get(driver_name, {})
         for i, stat_name in enumerate(stats_names):
             tag, metric_name = self._parse_ethtool_queue_num(stat_name)
             metric_prefix = '.queue.'
@@ -1395,14 +1432,17 @@ class Network(AgentCheck):
             if not tag:
                 tag, metric_name = self._parse_ethtool_queue_array(stat_name)
                 metric_prefix = '.queue.'
+            if metric_name and metric_name not in ETHTOOL_METRIC_NAMES[driver_name]:
+                # A per queue/cpu metric was found but is not part of the collected metrics
+                continue
+            if not tag and stat_name in ethtool_global_metrics:
+                tag = 'global'
+                metric_prefix = '.'
+                metric_name = stat_name
             if not tag:
                 continue
-            if metric_name in ETHTOOL_METRIC_NAMES[driver_name]:
-                offset = 8 + 8 * i
-                value = struct.unpack('Q', stats[offset : offset + 8])[0]
-                ethtool_metrics[tag][driver_name + metric_prefix + metric_name] = value
-
-        return ethtool_metrics
+            res[tag][driver_name + metric_prefix + metric_name] = self._get_stat_value(stats, i)
+        return res
 
     def _get_ena_metrics(self, stats_names, stats):
         """
@@ -1411,8 +1451,6 @@ class Network(AgentCheck):
         metrics = {}
         for i, stat_name in enumerate(stats_names):
             if stat_name in ENA_METRIC_NAMES:
-                offset = 8 + 8 * i
-                value = struct.unpack('Q', stats[offset : offset + 8])[0]
-                metrics[ENA_METRIC_PREFIX + stat_name] = value
+                metrics[ENA_METRIC_PREFIX + stat_name] = self._get_stat_value(stats, i)
 
         return metrics

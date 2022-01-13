@@ -111,7 +111,9 @@ ENA_ETHTOOL_VALUES = {
         'ena.queue.tx_tx_poll': 87509,
         'ena.queue.tx_unmask_interrupt': 87481,
     },
+    'global': {'ena.resume': 0, 'ena.suspend': 0, 'ena.tx_timeout': 0, 'ena.wd_expired': 0},
 }
+
 
 VIRTIO_ETHTOOL_VALUES = {
     'queue:0': {
@@ -373,6 +375,18 @@ HV_NETVSC_ETHTOOL_VALUES = {
         'hv_netvsc.cpu.vf_tx_bytes': 6038160981,
         'hv_netvsc.cpu.vf_tx_packets': 4145533,
     },
+    'global': {
+        'hv_netvsc.rx_comp_busy': 0,
+        'hv_netvsc.rx_no_memory': 0,
+        'hv_netvsc.stop_queue': 0,
+        'hv_netvsc.tx_busy': 0,
+        'hv_netvsc.tx_no_memory': 0,
+        'hv_netvsc.tx_no_space': 0,
+        'hv_netvsc.tx_scattered': 0,
+        'hv_netvsc.tx_send_full': 0,
+        'hv_netvsc.tx_too_big': 0,
+        'hv_netvsc.wake_queue': 0,
+    },
 }
 
 GVE_ETHTOOL_VALUES = {
@@ -452,6 +466,14 @@ GVE_ETHTOOL_VALUES = {
         'gve.queue.tx_stop': 0,
         'gve.queue.tx_wake': 0,
     },
+    'global': {
+        'gve.dma_mapping_error': 0,
+        'gve.page_alloc_fail': 0,
+        'gve.rx_buf_alloc_fail': 0,
+        'gve.rx_desc_err_dropped_pkt': 0,
+        'gve.rx_skb_alloc_fail': 0,
+        'gve.tx_timeouts': 0,
+    },
 }
 
 if PY3:
@@ -459,7 +481,6 @@ if PY3:
 
     def decode_string(s):
         return s.decode(ESCAPE_ENCODING)
-
 
 else:
     ESCAPE_ENCODING = 'string-escape'
