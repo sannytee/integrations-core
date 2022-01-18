@@ -498,6 +498,25 @@ class Network(AgentCheck):
                 self.log.debug("Unable to read %s.", proc_data_path)
 
         nstat_metrics_names = {
+            'Ip': {
+                'InReceives': 'system.net.ip.in_receives',
+                'InHdrErrors': 'system.net.ip.in_header_errors',
+                'InAddrErrors': 'system.net.ip.in_addr_errors',
+                'InUnknownProtos': 'system.net.ip.in_unknown_protos',
+                'InDiscards': 'system.net.ip.in_discards',
+                'InDelivers': 'system.net.ip.in_delivers',
+                'OutRequests': 'system.net.ip.out_requests',
+                'OutDiscards': 'system.net.ip.out_discards',
+                'OutNoRoutes': 'system.net.ip.out_no_routes',
+                'ForwDatagrams': 'system.net.ip.forwarded_datagrams',
+                'ReasmTimeout': 'system.net.ip.reassembly_timeouts',
+                'ReasmReqds': 'system.net.ip.reassembly_requests',
+                'ReasmOKs': 'system.net.ip.reassembly_oks',
+                'ReasmFails': 'system.net.ip.reassembly_fails',
+                'FragOKs': 'system.net.ip.fragmentation_oks',
+                'FragFails': 'system.net.ip.fragmentation_fails',
+                'FragCreates': 'system.net.ip.fragmentation_creates',
+            },
             'Tcp': {
                 'RetransSegs': 'system.net.tcp.retrans_segs',
                 'InSegs': 'system.net.tcp.in_segs',
