@@ -50,6 +50,27 @@ CONNTRACK_STATS = {
     'system.net.conntrack.search_restart': (39936711, 36983181),
 }
 
+
+PROC_NET_STATS = {
+    'system.net.ip.in_receives': 159747123,
+    'system.net.ip.in_header_errors': 23,
+    'system.net.ip.in_addr_errors': 0,
+    'system.net.ip.in_unknown_protos': 0,
+    'system.net.ip.in_discards': 0,
+    'system.net.ip.in_delivers': 159745645,
+    'system.net.ip.out_requests': 162992767,
+    'system.net.ip.out_discards': 613,
+    'system.net.ip.out_no_routes': 0,
+    'system.net.ip.forwarded_datagrams': 1449,
+    'system.net.ip.reassembly_timeouts': 0,
+    'system.net.ip.reassembly_requests': 0,
+    'system.net.ip.reassembly_oks': 0,
+    'system.net.ip.reassembly_fails': 0,
+    'system.net.ip.fragmentation_oks': 0,
+    'system.net.ip.fragmentation_fails': 0,
+    'system.net.ip.fragmentation_creates': 0,
+}
+
 if PY3:
     ESCAPE_ENCODING = 'unicode-escape'
 
@@ -123,6 +144,14 @@ def test_cx_state_mocked(is_linux, aggregator, check):
         check.check(instance)
         for metric, value in iteritems(CX_STATE_GAUGES_VALUES):
             aggregator.assert_metric(metric, value=value)
+
+
+@mock.patch('datadog_checks.network.network.Platform.is_linux', return_value=True)
+def test_proc_net_metrics(is_linux, aggregator, check):
+    check._get_net_proc_base_location = lambda x: FIXTURE_DIR
+    check.check({})
+    for metric, value in iteritems(PROC_NET_STATS):
+        aggregator.assert_metric(metric, value=value)
 
 
 def test_add_conntrack_stats_metrics(aggregator, check):
