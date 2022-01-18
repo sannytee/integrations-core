@@ -83,6 +83,22 @@ system.net.ip.fragmentation_fails,gauge,,datagram,,Number of output IP datagrams
 system.net.ip.fragmentation_fails.count,count,,datagram,,Number of output IP datagrams discarded because they couldn't be fragmented.,-1,system,ip frags fails
 system.net.ip.fragmentation_creates,gauge,,unit,,Number of output IP fragments generated as a result of IP fragmentation.,0,system,ip frags creates
 system.net.ip.fragmentation_creates.count,count,,unit,,Number of output IP fragments generated as a result of IP fragmentation.,0,system,ip frags creates
+system.net.tcp.active_opens,gauge,,connection,,Number of times TCP connections have made a direct transition to the SYN-SENT state from the CLOSED state.,0,system,tcp active opens
+system.net.tcp.active_opens.count,count,,connection,,Number of times TCP connections have made a direct transition to the SYN-SENT state from the CLOSED state.,0,system,tcp active opens
+system.net.tcp.passive_opens,gauge,,connection,,Number of times TCP connections have made a direct transition to the SYN-RCVD state from the LISTEN state.,0,system,tcp passive opens
+system.net.tcp.passive_opens.count,count,,connection,,Number of times TCP connections have made a direct transition to the SYN-RCVD state from the LISTEN state.,0,system,tcp passive opens
+system.net.tcp.attempt_fails,gauge,,connection,,The number of times TCP connections have made a direct transition to the CLOSED state from either the SYN-SENT state or the SYN-RCVD state, plus the number of times TCP connections have made a direct transition to the LISTEN state from the SYN-RCVD state.,-1,system,tcp attempt fails
+system.net.tcp.attempt_fails.count,count,,connection,,The number of times TCP connections have made a direct transition to the CLOSED state from either the SYN-SENT state or the SYN-RCVD state, plus the number of times TCP connections have made a direct transition to the LISTEN state from the SYN-RCVD state.,-1,system,tcp attempt fails
+system.net.tcp.established_resets,gauge,,connection,,The number of times TCP connections have made a direct transition to the CLOSED state from either the ESTABLISHED state or the CLOSE-WAIT state.,-1,system,tcp established rst
+system.net.tcp.established_resets.count,count,,connection,,The number of times TCP connections have made a direct transition to the CLOSED state from either the ESTABLISHED state or the CLOSE-WAIT state.,-1,system,tcp established rst
+system.net.tcp.current_established,gauge,,connection,,The number of TCP connections for which the current state is either ESTABLISHED or CLOSE-WAIT.,0,system,tcp current estab
+system.net.tcp.current_established.count,count,,connection,,The number of TCP connections for which the current state is either ESTABLISHED or CLOSE-WAIT.,0,system,tcp current estab
+system.net.tcp.in_errors,gauge,,packet,,The total number of segments received in error (e.g. bad TCP checksums).,-1,system,tcp in errors
+system.net.tcp.in_errors.count,count,,packet,,The total number of segments received in error (e.g. bad TCP checksums).,-1,system,tcp in errors
+system.net.tcp.out_resets,gauge,,packet,,The number of TCP segments sent containing the RST flag.,-1,system,tcp out rst
+system.net.tcp.out_resets.count,count,,packet,,The number of TCP segments sent containing the RST flag.,-1,system,tcp out rst
+system.net.tcp.in_csum_errors,gauge,,packet,,The number of TCP segments received with a bad TCP checksum.,-1,system,tcp csum errors
+system.net.tcp.in_csum_errors.count,count,,packet,,The number of TCP segments received with a bad TCP checksum.,-1,system,tcp csum errors
 system.net.tcp.failed_retransmits,gauge,,packet,,Number of TCP packets that failed to be retransmitted (Linux only),0,system,failed retransmit
 system.net.tcp.failed_retransmits.count,count,,packet,,Number of TCP packets that failed to be retransmitted (Linux only),0,system,failed retransmit monotonic count
 system.net.tcp.in_segs,gauge,,segment,second,The number of TCP segments received (Linux or Solaris only).,0,system,segs in
