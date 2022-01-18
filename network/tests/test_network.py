@@ -86,6 +86,22 @@ PROC_NET_STATS = {
     'system.net.ip.fragmentation_oks.count': 0,
     'system.net.ip.fragmentation_fails.count': 0,
     'system.net.ip.fragmentation_creates.count': 0,
+    'system.net.tcp.active_opens': 6828054,
+    'system.net.tcp.passive_opens': 4198200,
+    'system.net.tcp.attempt_fails': 174,
+    'system.net.tcp.established_resets': 761431,
+    'system.net.tcp.current_established': 59,
+    'system.net.tcp.in_errors': 0,
+    'system.net.tcp.out_resets': 792992,
+    'system.net.tcp.in_csum_errors': 0,
+    'system.net.tcp.active_opens.count': 6828054,
+    'system.net.tcp.passive_opens.count': 4198200,
+    'system.net.tcp.attempt_fails.count': 174,
+    'system.net.tcp.established_resets.count': 761431,
+    'system.net.tcp.current_established.count': 59,
+    'system.net.tcp.in_errors.count': 0,
+    'system.net.tcp.out_resets.count': 792992,
+    'system.net.tcp.in_csum_errors.count': 0,
 }
 
 if PY3:
@@ -166,7 +182,8 @@ def test_cx_state_mocked(is_linux, aggregator, check):
 @mock.patch('datadog_checks.network.network.Platform.is_linux', return_value=True)
 def test_proc_net_metrics(is_linux, aggregator, check):
     check._get_net_proc_base_location = lambda x: FIXTURE_DIR
-    check.check({})
+    instance = {'collect_count_metrics': True}
+    check.check(instance)
     for metric, value in iteritems(PROC_NET_STATS):
         aggregator.assert_metric(metric, value=value)
 
