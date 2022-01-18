@@ -69,6 +69,23 @@ PROC_NET_STATS = {
     'system.net.ip.fragmentation_oks': 0,
     'system.net.ip.fragmentation_fails': 0,
     'system.net.ip.fragmentation_creates': 0,
+    'system.net.ip.in_receives.count': 159747123,
+    'system.net.ip.in_header_errors.count': 23,
+    'system.net.ip.in_addr_errors.count': 0,
+    'system.net.ip.in_unknown_protos.count': 0,
+    'system.net.ip.in_discards.count': 0,
+    'system.net.ip.in_delivers.count': 159745645,
+    'system.net.ip.out_requests.count': 162992767,
+    'system.net.ip.out_discards.count': 613,
+    'system.net.ip.out_no_routes.count': 0,
+    'system.net.ip.forwarded_datagrams.count': 1449,
+    'system.net.ip.reassembly_timeouts.count': 0,
+    'system.net.ip.reassembly_requests.count': 0,
+    'system.net.ip.reassembly_oks.count': 0,
+    'system.net.ip.reassembly_fails.count': 0,
+    'system.net.ip.fragmentation_oks.count': 0,
+    'system.net.ip.fragmentation_fails.count': 0,
+    'system.net.ip.fragmentation_creates.count': 0,
 }
 
 if PY3:
