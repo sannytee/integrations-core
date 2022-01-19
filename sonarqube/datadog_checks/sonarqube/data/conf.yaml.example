@@ -124,7 +124,7 @@ instances:
     #
     # default_exclude: []
 
-    ## @param components - mapping - optional
+    ## @param components - mapping - required
     ## The components for which metrics should be collected. Each object may override the default
     ## options. The following example gathers all default metrics for "some-project",
     ## and only what is included/excluded for "another-project":
@@ -144,6 +144,12 @@ instances:
     ## or `false.
     #
     # components: {}
+
+    ## @param warn_on_missing_components - boolean - optional - default: false
+    ## Generate a warning if specified component key/s are not found
+    ## in any of the available components.
+    #
+    # warn_on_missing_components: true
 
     ## @param proxy - mapping - optional
     ## This overrides the `proxy` setting in `init_config`.

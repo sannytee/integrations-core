@@ -27,6 +27,15 @@ def test_check(aggregator, dd_run_check, sonarqube_check, web_instance):
     aggregator.assert_service_check('sonarqube.api_access', status=check.OK, tags=global_tags)
 
 
+def test_component_unavailable(aggregator, dd_run_check, sonarqube_check, web_instance):
+    web_instance['components'] = {'not-exists': {}}
+    web_instance['warn_on_missing_components'] = 'true'
+    check = sonarqube_check(web_instance)
+    dd_run_check(check)
+
+    assert len(check.warnings) == 1
+
+
 def test_version_metadata(datadog_agent, dd_run_check, sonarqube_check, web_instance):
     check = sonarqube_check(web_instance)
     check.check_id = 'test:123'

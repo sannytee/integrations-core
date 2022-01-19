@@ -58,6 +58,8 @@ files:
           items:
             type: string
       - name: components
+        required: true
+        enabled: false
         description: |
           The components for which metrics should be collected. Each object may override the default
           options. The following example gathers all default metrics for "some-project",
@@ -89,6 +91,14 @@ files:
             type: array
             items:
               type: string
+      - name: warn_on_missing_components
+        description: |
+          Generate a warning if specified component key/s are not found
+          in any of the available components.
+        value:
+          type: boolean
+          display_default: false
+          example: true
       - template: instances/http
         overrides:
           password.hidden: true

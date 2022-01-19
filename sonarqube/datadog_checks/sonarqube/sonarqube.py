@@ -23,6 +23,7 @@ class SonarqubeCheck(AgentCheck):
 
         # Construct the component data on the first check run
         self._components = None
+        self.warn_missing_components = self.instance.get('warn_on_missing_components', False)
 
         self.check_initializations.append(self.parse_config)
 
@@ -36,29 +37,49 @@ class SonarqubeCheck(AgentCheck):
 
     def collect_metrics(self):
         available_metrics = self.discover_available_metrics()
+        components_available = self.discover_components_available()
+        components_notfound = []
 
         for component, (tag_name, should_collect_metric) in self._components.items():
-            keys_to_query = []
+            if component in components_available:
+                keys_to_query = []
 
-            for key, metric in available_metrics.items():
-                if should_collect_metric(metric):
-                    keys_to_query.append(key)
+                for key, metric in available_metrics.items():
+                    if should_collect_metric(metric):
+                        keys_to_query.append(key)
 
-            if not keys_to_query:
-                self.log.warning('Pattern for component `%s` does not match any available metrics', component)
+                if not keys_to_query:
+                    self.log.warning('Pattern for component `%s` does not match any available metrics.', component)
 
-            response = self.http.get(
-                '{}/api/measures/component'.format(self._web_endpoint),
-                params={'component': component, 'metricKeys': ','.join(keys_to_query)},
-            )
-            response.raise_for_status()
-            metric_data = response.json()
+                self.log.debug('Querying metricKeys for component `%s`', component)
+                response = self.http.get(
+                    '{}/api/measures/component'.format(self._web_endpoint),
+                    params={'component': component, 'metricKeys': ','.join(keys_to_query)},
+                )
+                response.raise_for_status()
+                metric_data = response.json()
 
-            for measure in metric_data['component']['measures']:
-                tags = ['{}:{}'.format(tag_name, component)]
-                tags.extend(self._tags)
+                for measure in metric_data['component']['measures']:
+                    tags = ['{}:{}'.format(tag_name, component)]
+                    tags.extend(self._tags)
 
-                self.gauge(available_metrics[measure['metric']], measure['value'], tags=tags)
+                    self.gauge(available_metrics[measure['metric']], measure['value'], tags=tags)
+            else:
+                components_notfound.append(component)
+
+        if components_notfound:
+            if self.warn_missing_components:
+                # Puts the integration in WARNING state showing a list of components that were not found.
+                self.warning(
+                    'The following components specified did not match any available components: %s',
+                    components_notfound,
+                )
+            else:
+                # Logs a warning like above but will maintain OK state.
+                self.log.warning(
+                    'The following components specified did not match any available components: %s',
+                    components_notfound,
+                )
 
     def discover_available_metrics(self):
         metadata_collected = False
@@ -98,6 +119,35 @@ class SonarqubeCheck(AgentCheck):
             page += 1
 
         return available_metrics
+
+    def discover_components_available(self):
+        #  https://next.sonarqube.com/sonarqube/web_api/api/components/search
+        components_available = list()
+
+        page = 1
+        seen = 0
+        total = -1
+
+        while seen != total:
+            response = self.http.get(
+                '{}/api/components/search'.format(self._web_endpoint), params={'qualifiers': 'TRK', 'p': page}
+            )
+            response.raise_for_status()
+
+            search_results = response.json()
+            if total < 0:
+                total = search_results.get('paging', page).get('total', page)
+
+            for component in search_results['components']:
+                seen += 1
+
+                components_available.append(component['key'])
+
+            page += 1
+
+        self.log.debug("Available components: %s", components_available)
+
+        return components_available
 
     @AgentCheck.metadata_entrypoint
     def collect_version(self, response):
