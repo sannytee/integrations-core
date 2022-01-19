@@ -102,6 +102,14 @@ PROC_NET_STATS = {
     'system.net.tcp.in_errors.count': 0,
     'system.net.tcp.out_resets.count': 792992,
     'system.net.tcp.in_csum_errors.count': 0,
+    'system.net.ip.in_no_routes': 6,
+    'system.net.ip.in_truncated_pkts': 0,
+    'system.net.ip.in_csum_errors': 0,
+    'system.net.ip.reassembly_overlaps': 0,
+    'system.net.ip.in_no_routes.count': 6,
+    'system.net.ip.in_truncated_pkts.count': 0,
+    'system.net.ip.in_csum_errors.count': 0,
+    'system.net.ip.reassembly_overlaps.count': 0,
 }
 
 if PY3:

@@ -77,12 +77,20 @@ system.net.ip.reassembly_oks,gauge,,datagram,,Number of IP datagrams successfull
 system.net.ip.reassembly_oks.count,count,,datagram,,Number of IP datagrams successfully reassembled.,0,system,ip reasm oks
 system.net.ip.reassembly_fails,gauge,,unit,,Number of failures during IP reassembly.,-1,system,ip reasm fails
 system.net.ip.reassembly_fails.count,count,,unit,,Number of failures during IP reassembly.,-1,system,ip reasm fails
+system.net.ip.reassembly_overlaps,gauge,,datagram,,Number of input IP fragments overlapping during reassembly.,-1,system,ip reasm overlaps
+system.net.ip.reassembly_overlaps.count,count,,datagram,,Number of input IP fragments overlapping during reassembly.,-1,system,ip reasm overlaps
 system.net.ip.fragmentation_oks,gauge,,datagram,,Number of output IP datagrams that were successfully fragmented.,0,system,ip frags ok
 system.net.ip.fragmentation_oks.count,count,,datagram,,Number of output IP datagrams that were successfully fragmented.,0,system,ip frags ok
 system.net.ip.fragmentation_fails,gauge,,datagram,,Number of output IP datagrams discarded because they couldn't be fragmented.,-1,system,ip frags fails
 system.net.ip.fragmentation_fails.count,count,,datagram,,Number of output IP datagrams discarded because they couldn't be fragmented.,-1,system,ip frags fails
 system.net.ip.fragmentation_creates,gauge,,unit,,Number of output IP fragments generated as a result of IP fragmentation.,0,system,ip frags creates
 system.net.ip.fragmentation_creates.count,count,,unit,,Number of output IP fragments generated as a result of IP fragmentation.,0,system,ip frags creates
+system.net.ip.in_no_routes,gauge,,datagram,,Number of input IP datagrams discarded because no route was found.,-1,system,ip in no route
+system.net.ip.in_no_routes.count,count,,datagram,,Number of input IP datagrams discarded because no route was found.,-1,system,ip in no route
+system.net.ip.in_truncated_pkts,gauge,,datagram,,Number of input IP datagrams whose actual size is smaller than the Total Length field in the IPv4 header.,-1,system,ip in truncated pkts
+system.net.ip.in_truncated_pkts.count,count,,datagram,,Number of input IP datagrams whose actual size is smaller than the Total Length field in the IPv4 header.,-1,system,ip in truncated pkts
+system.net.ip.in_csum_errors,gauge,,datagram,,Number of input IP datagrams with incorrect checksum.,-1,system,ip in csum errors
+system.net.ip.in_csum_errors.count,count,,datagram,,Number of input IP datagrams with incorrect checksum.,-1,system,ip in csum errors
 system.net.tcp.active_opens,gauge,,connection,,Number of times TCP connections have made a direct transition to the SYN-SENT state from the CLOSED state.,0,system,tcp active opens
 system.net.tcp.active_opens.count,count,,connection,,Number of times TCP connections have made a direct transition to the SYN-SENT state from the CLOSED state.,0,system,tcp active opens
 system.net.tcp.passive_opens,gauge,,connection,,Number of times TCP connections have made a direct transition to the SYN-RCVD state from the LISTEN state.,0,system,tcp passive opens

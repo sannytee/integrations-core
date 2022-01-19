@@ -517,6 +517,12 @@ class Network(AgentCheck):
                 'FragFails': 'system.net.ip.fragmentation_fails',
                 'FragCreates': 'system.net.ip.fragmentation_creates',
             },
+            'IpExt': {
+                'InNoRoutes': 'system.net.ip.in_no_routes',
+                'InTruncatedPkts': 'system.net.ip.in_truncated_pkts',
+                'InCsumErrors': 'system.net.ip.in_csum_errors',
+                'ReasmOverlaps': 'system.net.ip.reassembly_overlaps',
+            },
             'Tcp': {
                 'RetransSegs': 'system.net.tcp.retrans_segs',
                 'InSegs': 'system.net.tcp.in_segs',
