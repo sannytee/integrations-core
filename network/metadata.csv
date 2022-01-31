@@ -69,7 +69,7 @@ system.net.ip.out_no_routes,gauge,,datagram,,Number of output IP datagrams disca
 system.net.ip.out_no_routes.count,count,,datagram,,Number of output IP datagrams discarded because no route was found (Linux only).,-1,system,ip out no route
 system.net.ip.forwarded_datagrams,gauge,,datagram,,Number of IP datagrams forwarded (Linux only).,0,system,ip forwarded
 system.net.ip.forwarded_datagrams.count,count,,datagram,,Number of IP datagrams forwarded (Linux only).,0,system,ip forwarded
-system.net.ip.reassembly_timeouts,gauge,,unit,,Number of IP timeouts triggered during reassembly (Linux only).,-1,system,ip reasm timeout
+system.net.ip.reassembly_timeouts,gauge,,timeout,,Number of IP timeouts triggered during reassembly (Linux only).,-1,system,ip reasm timeout
 system.net.ip.reassembly_timeouts.count,count,,unit,,Number of IP timeouts triggered during reassembly (Linux only).,-1,system,ip reasm timeout
 system.net.ip.reassembly_requests,gauge,,unit,,Number of IP fragments received that neede to be reassembled (Linux only).,0,system,ip reasm requests
 system.net.ip.reassembly_requests.count,count,,unit,,Number of IP fragments received that neede to be reassembled (Linux only).,0,system,ip reasm requests
